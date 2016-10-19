@@ -6,7 +6,7 @@ CREATE TABLE Users (
 );
 CREATE TABLE Items (
 	id integer PRIMARY KEY,
-	FOREIGN KEY(sellerID) REFERENCES Users(id),
+	sellerID integer REFERENCES Users(id),
 	name text varchar(80),
 	description text varchar(255),
 	price integer,

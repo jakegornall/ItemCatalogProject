@@ -1,5 +1,8 @@
 import sqlite3
 
+# name your database
+database = 'ItemCatalog.db'
+
 with open('databaseSetupScript.sql', 'r') as databaseSetupScript:
 	databaseSetupScript = databaseSetupScript.read().replace('\n', '').replace('\t', '')
 
@@ -11,7 +14,10 @@ else:
 	print DBactionList
 
 	for i in DBactionList:
-		conn = sqlite3.connect('ItemCatalog.db')
+		conn = sqlite3.connect(database)
+		if not conn:
+			print "Could not connect to database."
+			break
 		c = conn.cursor()
 		c.execute(i)
 		conn.commit()
