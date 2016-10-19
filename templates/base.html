@@ -25,11 +25,8 @@
 		</div>
 		<div class="col-md-4 search-box">
 			<form method="GET" action="/search">
-				<label>
-					<h3>Search:</h3>
-					<input type="text" name="search-text">
-					<input type="submit" name="Search">
-				</label>
+				<input type="text" name="search-text" placeholder="Search...">
+				<input type="submit" name="Search">
 			</form>
 		</div>
 		<div class="col-md-4 login-box">
@@ -39,6 +36,7 @@
 		</div>
 	</div>
 </header>
+<hr>
 {% block content %}
 {% endblock %}
 </body>

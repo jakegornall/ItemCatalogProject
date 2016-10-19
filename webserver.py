@@ -19,8 +19,8 @@ app = Flask(__name__)
 # app.jinja_env.globals.update(functionName=functionName)
 
 @app.route('/')
-def HomePage():
-    return render_template('home.html')
+def LandingPage():
+    return render_template('landingPage.html')
 
 
 if __name__ == "__main__":

@@ -2,3 +2,39 @@ body, .container {
 	width: 100%;
 	height: 100%;
 }
+header {
+	padding: 5px;
+}
+header h1, form, button {
+	margin: 0px;
+}
+hr {
+	margin: 5px;
+	margin-bottom: 10px;
+}
+.catagory-div {
+	margin-left: 10%;
+	border-radius: 15px;
+	max-width: 100%;
+	padding: 10px;
+	-webkit-box-shadow: 10px 10px 42px -6px rgba(0,0,0,0.75);
+	-moz-box-shadow: 10px 10px 42px -6px rgba(0,0,0,0.75);
+	box-shadow: 10px 10px 42px -6px rgba(0,0,0,0.75);
+}
+.catagory-clearance {
+	border-radius: 15px;
+	max-width: 625px;
+	padding: 10px;
+	-webkit-box-shadow: 10px 10px 42px -6px rgba(0,0,0,0.75);
+	-moz-box-shadow: 10px 10px 42px -6px rgba(0,0,0,0.75);
+	box-shadow: 10px 10px 42px -6px rgba(0,0,0,0.75);
+}
+.cat-div-con {
+	align-items: right;
+}
+.catagory-clearance h2 {
+	margin-top: 0px;
+}
+.row {
+	margin-bottom: 10px;
+}
