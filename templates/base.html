@@ -1,43 +1,58 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>MyShop.com</title>
-	<!-- Latest compiled and minified CSS -->
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <title>MyShop.com</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
-	<!-- Optional theme -->
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
-	<!-- minified jQuery -->
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js" integrity="sha384-THPy051/pYDQGanwU6poAc/hOdQxjnOEXzbT+OuUAFqNqFjL+4IGLBgCJC3ZOShY" crossorigin="anonymous"></script>
+    <!-- minified jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js" integrity="sha384-THPy051/pYDQGanwU6poAc/hOdQxjnOEXzbT+OuUAFqNqFjL+4IGLBgCJC3ZOShY" crossorigin="anonymous"></script>
 
-	<!-- Latest compiled and minified JavaScript -->
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
-	<!-- Custom CSS -->
-	<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='styles.css')}}">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='styles.css')}}">
 </head>
 <body>
 <header class="container fixed-pos">
-	<div class="row">
-		<div class="col-md-4 logo-box">
-			<h1>MyShop.com</h1>
-		</div>
-		<div class="col-md-4 search-box">
-			<form method="GET" action="/search">
-				<input type="text" name="search-text" placeholder="Search...">
-				<input type="submit" name="Search">
-			</form>
-		</div>
-		<div class="col-md-4 login-box">
-			<button>Login</button>
-			<button>Sign Up</button>
-			<button>Login With Facebook</button>
-		</div>
-	</div>
+    <div class="row">
+        <div class="col-md-4 logo-box">
+            <a href="/"><h1>MyShop.com</h1></a>
+        </div>
+        <div class="col-md-4 search-box">
+            <form method="GET" action="/search">
+                <input type="text" name="keyword" placeholder="Search...">
+                <button type="submit" name="search">Search</button>
+            </form>
+        </div>
+        <div class="col-md-4 login-box">
+            <button>Login</button>
+            <button>Sign Up</button>
+            <button id="user-settings-button"><h4>Welcome, user.name</h4></button>
+            <div id="user-settings-menu" style="display: none">
+                <div id="to-profile"><a href="/1/profile">Profile</a></div>
+                <div id="to-account-settings"><a href="/1/userSettings">Settings</a></div>
+                <div id="logout"><a href="/1/logout">Logout</a></div>
+            </div>
+        </div>
+    </div>
 </header>
-<hr>
+<br>
 {% block content %}
 {% endblock %}
+<script>
+    // displays and hides user settings drop down menu on click.
+    $('#user-settings-button').click(function() {
+        if ($('#user-settings-menu').css('display') == 'block') {
+            $('#user-settings-menu').attr('style', 'display: none');
+        } else {
+            $('#user-settings-menu').attr('style', 'display: block');
+        }
+    });
+</script>
 </body>
 </html>

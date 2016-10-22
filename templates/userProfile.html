@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<div id="userInfoDiv">
+	<div id="ProfilePicDiv">
+		<img src="{{user.profilePicURL}}">
+	</div>
+	<h1>{{user.name}}</h1>
+</div>
+{% endblock %}
