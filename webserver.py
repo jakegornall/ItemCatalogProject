@@ -10,6 +10,7 @@ import requests
 from createDB import Base, Items, Users
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+import time
 
 # Create session and connect to DB
 engine = create_engine('sqlite:///ItemCatalog.db')
