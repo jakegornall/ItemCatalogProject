@@ -50,10 +50,11 @@ def UserSettings(userID):
 def Logout(userID):
     return "logout"
 
-@app.route('/clearanceItemsAPI')
+@app.route('/clearanceItemsAPI', methods=['GET'])
 def clearanceItemsAPI():
     clearanceItems = session.query(Items).filter(Items.onClearance == 'True').all()
     return jsonify(results=[e.serialize() for e in clearanceItems])
+
 
 
 if __name__ == "__main__":
