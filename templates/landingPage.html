@@ -1,39 +1,42 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container">
-	<div class="row">
-		<div class="col-md-7 cat-div-con">
-			<div class="catagory-div">
-				<h2 class="cat-title text-center">On SALE!</h2>
-				<div class="row">
-				<div class="col-md-4 clearance-item" style="max-width: 200px">
-					<img src="{{item.imageURL}}" class="img-responsive">
-					<h2>{{item.name}}</h2>
-					<h4>{{item.price}}</h4>
-				</div>
-				<script>
-					// fetches on clearance Items from API.
-					$.ajax(
-						url: '/clearanceItemsAPI'
-						success: function(result){
-
-						});
-				</script>
-			</div>
-			</div>
-		</div>
-		<div class="col-md-5 catagory-clearance">
-			<h2 class="text-center">Clearance Items</h2>
-			<div class="row">
-				{% for item in clearanceItems %}
-				<div class="col-md-4 clearance-item" style="max-width: 200px">
-					<img src="{{item.imageURL}}" class="img-responsive">
-					<h2>{{item.name}}</h2>
-					<h4>{{item.price}}</h4>
-				</div>
-				{% endfor %}
-			</div>
-		</div>
-	</div>
+    <div class="row">
+        <div class="col-md-7 cat-div-con">
+            <div class="catagory-div">
+                <h2 class="cat-title text-center">On SALE!</h2>
+                <div class="row">
+                <div class="col-md-4 clearance-item" style="max-width: 200px">
+                    <img src="http://placehold.it/100x100" class="img-responsive">
+                    <h2>item.name</h2>
+                    <h4>item.price</h4>
+                </div>
+            </div>
+            </div>
+        </div>
+        <div class="col-md-5 catagory-clearance">
+            <h2 class="text-center">Clearance Items</h2>
+            <div class="row" id="clearanceItemsContainer">
+            </div>
+        </div>
+    </div>
 </div>
+<script>
+// fetches on clearance Items from API.
+$.ajax({
+    type: "GET",
+    url: "http://localhost:5000/clearanceItemsAPI",
+    dataType: "json",
+    success: function (response) {
+        var results = response["results"];
+        for (var i = 0; i < results.length; i++) {
+            $("#clearanceItemsContainer").append(
+                "<div class='col-md-4 clearance-item' style='max-width: 200px'><img src='" + results.imageURL + "' class='img-responsive'><h2>" + results.name + "</h2><h4>" + results.price + "</h4></div>"
+            );
+        }
+    // failure: function (response) {
+    //     $("#clearanceItemsContainer").html("<h3>Could not fetch items</h3>");
+    // }
+}});
+</script>
 {% endblock %}
