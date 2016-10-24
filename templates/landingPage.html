@@ -29,14 +29,12 @@ $.ajax({
     dataType: "json",
     success: function (response) {
         var results = response["results"];
-        for (var i = 0; i < results.length; i++) {
+        for (i = 0; i < results.length; i++) {
             $("#clearanceItemsContainer").append(
-                "<div class='col-md-4 clearance-item' style='max-width: 200px'><img src='" + results.imageURL + "' class='img-responsive'><h2>" + results.name + "</h2><h4>" + results.price + "</h4></div>"
+                "<div class='col-md-4 clearance-item' style='max-width: 200px'><img src='" + results["imageURL"] + "' class='img-responsive'><h2>" + results["name"] + "</h2><h4>" + results["price"] + "</h4></div>"
             );
         }
-    // failure: function (response) {
-    //     $("#clearanceItemsContainer").html("<h3>Could not fetch items</h3>");
-    // }
+    failure: $("#clearanceItemsContainer").html("<h3>Could not fetch items</h3>");
 }});
 </script>
 {% endblock %}

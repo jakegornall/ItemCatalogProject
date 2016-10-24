@@ -18,32 +18,35 @@
     <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='styles.css')}}">
 </head>
 <body>
-<header class="container fixed-pos">
-    <div class="row">
-        <div class="col-md-4 logo-box">
-            <a href="/"><h1>MyShop.com</h1></a>
-        </div>
-        <div class="col-md-4 search-box">
-            <form method="GET" action="/search">
-                <input type="text" name="keyword" placeholder="Search...">
-                <button type="submit" name="search">Search</button>
-            </form>
-        </div>
-        <div class="col-md-4 login-box">
-            <button>Login</button>
-            <button>Sign Up</button>
-            <button id="user-settings-button"><h4>Welcome, user.name</h4></button>
-            <div id="user-settings-menu" style="display: none">
-                <div id="to-profile"><a href="/1/profile">Profile</a></div>
-                <div id="to-account-settings"><a href="/1/userSettings">Settings</a></div>
-                <div id="logout"><a href="/1/logout">Logout</a></div>
+<header>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 logo-box">
+                <a href="/"><h1>MyShop.com</h1></a>
+            </div>
+            <div class="col-md-4 search-box">
+                <form method="GET" action="/search">
+                    <input type="text" name="keyword" placeholder="Search...">
+                    <button type="submit" name="search">Search</button>
+                </form>
+            </div>
+            <div class="col-md-4 login-box">
+                <button>Login</button>
+                <button>Sign Up</button>
+                <button id="user-settings-button"><h4>Welcome, user.name</h4></button>
+                <div id="user-settings-menu" style="display: none">
+                    <div id="to-profile"><a href="/1/profile">Profile</a></div>
+                    <div id="to-account-settings"><a href="/1/userSettings">Settings</a></div>
+                    <div id="logout"><a href="/1/logout">Logout</a></div>
+                </div>
             </div>
         </div>
     </div>
 </header>
-<br>
+<div class="content">
 {% block content %}
 {% endblock %}
+</div>
 <script>
     // displays and hides user settings drop down menu on click.
     $('#user-settings-button').click(function() {
