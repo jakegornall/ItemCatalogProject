@@ -2,8 +2,8 @@
 {% block content %}
 <div id="userInfoDiv">
 	<div id="ProfilePicDiv">
-		<img src="{{user.profilePicURL}}">
+		<img class="img-circle" src="{{user.profilePicURL}}" width="200px">
 	</div>
-	<h1>{{user.name}}</h1>
+	<h1 id="name">{{user.name}}</h1>
 </div>
 {% endblock %}

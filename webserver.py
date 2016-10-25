@@ -56,6 +56,10 @@ def clearanceItemsAPI():
     clearanceItems = session.query(Items).filter(Items.onClearance == 'True').all()
     return jsonify(results=[e.serialize() for e in clearanceItems])
 
+@app.route('/saleItemsAPI', methods=['GET'])
+def saleItemsAPI():
+    saleItems = session.query(Items).filter(Items.onSale == 'True').all()
+    return jsonify(results=[e.serialize() for e in saleItems])
 
 
 if __name__ == "__main__":
