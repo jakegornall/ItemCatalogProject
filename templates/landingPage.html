@@ -18,33 +18,66 @@
         </div>
     </div>
 </div>
+<!-- Facebook Login Scripts -->
 <script>
-// fetches on clearance Items from API every 7 seconds.
+function statusChangeCallback(response) {
+    var FBstatus = response.status;
+    var FBauthResponse = response.authResponse;
+    if (FBstatus === 'connected') {
+        $('#login-button').hide();
+        $('#signin-button').hide();
+        $('#user-settings-button').show();
+    } else {
+        console.log('user not connected to Facebook.')
+    }
+}
+// initiates FBlogin on button click.
+$('.fb-login-button').click(
+    FB.login(function(response) {
+        if (response.authResponse) {
+            console.log('Welcome! Fetching your information... ');
+            FB.api('/me', function(response) {
+                $('#user-settings-button').html('Welcome, ' + response.name + '!');
+                $('#user-settings-button').show();
+            });
+        } else {
+            console.log('User cancelled login or did not fully authorize.');
+        }
+    });
+);
+// fetches users facbook login status.
+FB.getLoginStatus(function(response) {
+    statusChangeCallback(response);
+});
+
+</script>
+<script>
+// fetches on clearance and on sale items from API every 7 seconds.
 var pastClearanceResults = [];
 var pastSaleResults = [];
 function ItemRefresh() {
-	$.ajax({
-	    type: "GET",
-	    url: "{{url_for('clearanceItemsAPI')}}",
-	    dataType: "json",
-	    success: function (response) {
-	        var results = response["results"];
-	        $("#loader-CI").attr("style", "display: none");
-	        for (i = 0; i < results.length; i++) {
-	        	if (pastClearanceResults.indexOf(results[i]["id"]) === -1) {
-		            $("#clearanceItemsContainer").append(
-		                "<div class='col-md-4 clearance-item' style='max-width: 200px'><img src='" + results[i]["imageURL"] + "' class='img-responsive'><h2>" + results[i]["name"] + "</h2><h4>" + results[i]["price"] + "</h4></div>"
-		            );
-		            pastClearanceResults.push(results[i]["id"]);
-	          	}
-	    	}
-	    },
-	    error: function (errorThrown) {
-	    	$("#loader-CI").attr("style", "display: none");
-	    	console.log(errorThrown);
-	    	$("#clearanceItemsContainer").html("Clearance Items Unavailable");
-	    }
-	});
+    $.ajax({
+        type: "GET",
+        url: "{{url_for('clearanceItemsAPI')}}",
+        dataType: "json",
+        success: function (response) {
+            var results = response["results"];
+            $("#loader-CI").attr("style", "display: none");
+            for (i = 0; i < results.length; i++) {
+                if (pastClearanceResults.indexOf(results[i]["id"]) === -1) {
+                    $("#clearanceItemsContainer").append(
+                        "<div class='col-md-4 clearance-item' style='max-width: 200px'><img src='" + results[i]["imageURL"] + "' class='img-responsive'><h2>" + results[i]["name"] + "</h2><h4>" + results[i]["price"] + "</h4></div>"
+                    );
+                    pastClearanceResults.push(results[i]["id"]);
+                }
+            }
+        },
+        error: function (errorThrown) {
+            $("#loader-CI").attr("style", "display: none");
+            console.log(errorThrown);
+            $("#clearanceItemsContainer").html("Clearance Items Unavailable");
+        }
+    });
     // fetches on sale items from API every 7 seconds.
     $.ajax({
         type: "GET",

@@ -18,6 +18,26 @@
     <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='styles.css')}}">
 </head>
 <body>
+<script>
+// facebook sdk
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '331293527223662',
+      cookie     : true,
+      xfbml      : true,
+      version    : 'v2.8'
+    });
+    FB.AppEvents.logPageView();
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+</script>
 <header>
     <div class="container">
         <div class="row">
@@ -31,9 +51,16 @@
                 </form>
             </div>
             <div class="col-md-4 login-box text-right">
-                <button class="btn btn-link btn-xs">Login</button>
-                <button class="btn btn-link btn-xs">Sign Up</button>
-                <button id="user-settings-button" class="btn btn-link btn-xs">Welcome, user.name</button>
+                <div
+                    class="fb-login-button"
+                    data-max-rows="1"
+                    data-size="large"
+                    data-show-faces="false"
+                    data-auto-logout-link="false">
+                </div>
+                <button class="btn btn-link btn-xs" id="login-button">Login</button>
+                <button class="btn btn-link btn-xs" id="signup-button">Sign Up</button>
+                <button id="user-settings-button" class="btn btn-link btn-xs" style="display: none">Welcome, user.name</button>
                 <div id="user-settings-menu" style="display: none">
                     <div id="to-profile" class="user-settings-menu-item"><a href="/1/profile">Profile</a></div>
                     <div id="to-account-settings" class="user-settings-menu-item"><a href="/1/userSettings">Settings</a></div>
