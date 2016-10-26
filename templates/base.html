@@ -36,14 +36,15 @@
                     data-max-rows="1"
                     data-size="large"
                     data-show-faces="false"
-                    data-auto-logout-link="false"
-                    onlogin="checkLoginState();">
+                    data-auto-logout-link="true"
+                    onlogin="checkLoginState();"
+                    scope="public_profile">
                 </div>
                 <button class="btn btn-link btn-xs" id="login-button">Login</button>
                 <button class="btn btn-link btn-xs" id="signup-button">Sign Up</button>
                 <button id="user-settings-button" class="btn btn-link btn-xs" style="display: none">Welcome, user.name</button>
                 <div id="user-settings-menu" style="display: none">
-                    <div id="to-profile" class="user-settings-menu-item"><a href="/1/profile">Profile</a></div>
+                    <div id="to-profile" class="user-settings-menu-item"><a href="">Profile</a></div>
                     <div id="to-account-settings" class="user-settings-menu-item"><a href="/1/userSettings">Settings</a></div>
                     <div id="logout" class="user-settings-menu-item"><a href="/1/logout">Logout</a></div>
                 </div>
