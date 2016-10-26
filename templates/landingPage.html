@@ -1,5 +1,54 @@
 {% extends 'base.html' %}
 {% block content %}
+<script>
+function statusChangeCallback(response) {
+    var FBstatus = response.status;
+    var FBauthResponse = response.authResponse;
+    console.log(FBstatus)
+    console.log(FBauthResponse)
+    if (FBstatus === 'connected') {
+        $('#login-button').hide();
+        $('#signup-button').hide();
+        $('.fb-login-button').hide();
+        FB.api('/me', function(response) {
+                $('#user-settings-button').html('Welcome, ' + response.name + '!');
+                $('#user-settings-button').show();
+        });
+    } else if (FBstatus === 'not_authorized') {
+        console.log('user not logged into MyShop.com')
+    } else {
+        console.log('user not connected to Facebook.')
+    }
+}
+// checks login status after user uses fb-login-button.
+function checkLoginState() {
+    FB.getLoginStatus(function(response) {
+        statusChangeCallback(response);
+    });
+}
+// facebook sdk
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '331293527223662',
+      cookie     : true,
+      xfbml      : true,
+      version    : 'v2.8'
+    });
+    FB.AppEvents.logPageView();
+    // fetches users facbook login status.
+    FB.getLoginStatus(function(response) {
+        statusChangeCallback(response);
+    });
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+</script>
 <div class="container">
     <div class="row">
         <div class="col-md-7 cat-div-con">
@@ -18,39 +67,6 @@
         </div>
     </div>
 </div>
-<!-- Facebook Login Scripts -->
-<script>
-function statusChangeCallback(response) {
-    var FBstatus = response.status;
-    var FBauthResponse = response.authResponse;
-    if (FBstatus === 'connected') {
-        $('#login-button').hide();
-        $('#signin-button').hide();
-        $('#user-settings-button').show();
-    } else {
-        console.log('user not connected to Facebook.')
-    }
-}
-// initiates FBlogin on button click.
-$('.fb-login-button').click(
-    FB.login(function(response) {
-        if (response.authResponse) {
-            console.log('Welcome! Fetching your information... ');
-            FB.api('/me', function(response) {
-                $('#user-settings-button').html('Welcome, ' + response.name + '!');
-                $('#user-settings-button').show();
-            });
-        } else {
-            console.log('User cancelled login or did not fully authorize.');
-        }
-    });
-);
-// fetches users facbook login status.
-FB.getLoginStatus(function(response) {
-    statusChangeCallback(response);
-});
-
-</script>
 <script>
 // fetches on clearance and on sale items from API every 7 seconds.
 var pastClearanceResults = [];
