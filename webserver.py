@@ -2,15 +2,12 @@ from flask import Flask, render_template, url_for, redirect, request, make_respo
 from flask import session as login_session
 import sqlite3
 import time, string, datetime, random
-from oauth2client.client import flow_from_clientsecrets
-from oauth2client.client import FlowExchangeError
-import httplib2
+import urllib2
 from flask import jsonify
 import requests
 from createDB import Base, Items, Users
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-import time
 
 # Create session and connect to DB
 engine = create_engine('sqlite:///ItemCatalog.db')
@@ -26,9 +23,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def LandingPage():
-    saleItems = session.query(Items).filter(Items.onSale == 'True').all()
-    clearanceItems = session.query(Items).filter(Items.onClearance == 'True').all()
-    return render_template('landingPage.html', saleItems=saleItems, clearanceItems=clearanceItems)
+    return render_template('landingPage.html')
 
 @app.route('/newItem', methods=['POST', 'GET'])
 def newItem():
@@ -36,7 +31,21 @@ def newItem():
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
-    return render_template('login.html')
+    if request.method == 'POST':
+        state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
+        responseObj = request.json
+        print responseObj
+        # login_session['fbID'] = responseObj.me.userID
+        # login_session['name'] = responseObj.me.name
+        # login_session['access_token'] = responseObj.fbResponse.accessToken
+        # login_session['state'] = state
+        # user = session.query(Users).filter(Users.fbID == login_session['fbID']).one()
+        # if not user:
+        #     newUser = Users(fbID=login_session['fbID'], name=login_session['name'])
+        #     session.add(newUser)
+        return "Success!"
+    if request.method == 'GET':
+        return render_template('login.html')
 
 @app.route('/<int:userID>/profile')
 def profile(userID):

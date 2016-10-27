@@ -1,6 +1,23 @@
 {% extends 'base.html' %}
 {% block content %}
 <script>
+function UserInfoToServer(fbResponseObject, meResponse) {
+    var url = "{{url_for('login')}}"
+    $.ajax({
+        type: "POST",
+        url: url,
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify({fbResponse: fbResponseObject, me: meResponse}),
+        success: function(response) {
+            console.log(response)
+        },
+        failure: function() {
+            console.log("failed to send user info to server.")
+        }
+    });
+}
+
+
 function logOut() {
     $('#login-button').show();
     $('#signup-button').show();
@@ -11,11 +28,12 @@ function logOut() {
 function loggedIn(FBauthResponse) {
     $('#login-button').hide();
     $('#signup-button').hide();
+    console.log(FBauthResponse)
     FB.api('/' + FBauthResponse.userID, function(response) {
-        console.log(response)
         $('#user-settings-button').html('Welcome, ' + response.name + '!');
         $('#user-settings-button').show();
         $('#to-profile').attr('href', '/'+ response.id+ '/profile');
+        UserInfoToServer(FBauthResponse, response);
     });
 }
 
