@@ -2,12 +2,13 @@ from flask import Flask, render_template, url_for, redirect, request, make_respo
 from flask import session as login_session
 import sqlite3
 import time, string, datetime, random
-import urllib2
+import httplib2
 from flask import jsonify
 import requests
 from createDB import Base, Items, Users
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+import json
 
 # Create session and connect to DB
 engine = create_engine('sqlite:///ItemCatalog.db')
@@ -33,24 +34,75 @@ def newItem():
 def login():
     if request.method == 'POST':
         state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
-        responseObj = request.json
-        print responseObj
-        # login_session['fbID'] = responseObj.me.userID
-        # login_session['name'] = responseObj.me.name
-        # login_session['access_token'] = responseObj.fbResponse.accessToken
-        # login_session['state'] = state
-        # user = session.query(Users).filter(Users.fbID == login_session['fbID']).one()
-        # if not user:
-        #     newUser = Users(fbID=login_session['fbID'], name=login_session['name'])
-        #     session.add(newUser)
-        return "Success!"
+        access_token = request.data
+
+        # Exchange client token for long-lived server-side token.
+        app_id = json.loads(open('fb_client_secrets.json', 'r').read())['web']['app_id']
+        app_secret = json.loads(open('fb_client_secrets.json', 'r').read())['web']['app_secret']
+        url = 'https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id=%s&client_secret=%s&fb_exchange_token=%s' % (app_id, app_secret, access_token)
+        h = httplib2.Http()
+        result = h.request(url, 'GET')[1]
+
+        # Use token to get user info from fb API.
+        userinfo_url = "https://graph.facebook.com/v2.8/me"
+        token = result.split("&")[0]
+
+        url = 'https://graph.facebook.com/v2.8/me?%s&fields=name,id,email' % token
+        h = httplib2.Http()
+        result = h.request(url, 'GET')[1]
+
+        data = json.loads(result)
+        login_session['state'] = state
+        login_session['access_token'] = token
+        login_session['provider'] = 'facebook'
+        login_session['fbID'] = data['id']
+        login_session['name'] = data['name']
+        login_session['email'] = data['email']
+
+        url = 'https://graph.facebook.com/v2.8/me/picture?%s&redirect=0&height=200&width=200' % token
+        h = httplib2.Http()
+        result = h.request(url, 'GET')[1]
+        data = json.loads(result)
+
+        login_session['picture'] = data['data']['url']
+
+        userCount = session.query(Users).filter(Users.fbID == login_session['fbID']).count()
+        # Add user to DB if not existing.
+        if userCount == None:
+            newUser = Users(
+                fbID=login_session['fbID'],
+                name=login_session['name'],
+                email=login_session['email']
+                )
+            session.add(newUser)
+            session.commit()
+            user = session.query(Users).filter(Users.fbID == login_session['fbID']).one()
+            message = "Successfully added %s as new user!" % login_session['name']
+            return jasonify(success=True, message=message, userID=user.id, state=login_session['state'])
+        # Update user info if current user.
+        if userCount != None:
+            user = session.query(Users).filter(Users.fbID == login_session['fbID']).one()
+            user.name = login_session['name']
+            user.email = login_session['email']
+            session.add(user)
+            session.commit()
+            user = session.query(Users).filter(Users.fbID == login_session['fbID']).one()
+            message = "Successfully updated %s's user info!" % login_session['name']
+            return jsonify(success=True, message=message, userID=user.id, state=login_session['state'])
+        else:
+            message = "Error occurred while updating info."
+            return jsonify(success=False, message=message)
+
     if request.method == 'GET':
         return render_template('login.html')
 
 @app.route('/<int:userID>/profile')
 def profile(userID):
-    user = session.query(Users).filter(Users.id == userID).one()
-    return render_template('userProfile.html', user=user)
+    if request.args.get("state") != login_session['state']:
+        return redirect('/')
+    else:
+        user = session.query(Users).filter(Users.id == userID).one()
+        return render_template('userProfile.html', name=user.name, pictureURL=login_session['picture'])
 
 @app.route('/<int:userID>/userSettings')
 def UserSettings(userID):

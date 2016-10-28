@@ -9,8 +9,9 @@ Base = declarative_base()
 class Users(Base):
     __tablename__ = 'Users'
     id = Column(Integer, primary_key=True)
-    fbid = Column(Integer, nullable = True)
+    fbID = Column(Integer, nullable = True)
     name = Column(String(80), nullable=False)
+    email = Column(String(255), nullable=True)
     
 class Items(Base):
     __tablename__ = 'Items'

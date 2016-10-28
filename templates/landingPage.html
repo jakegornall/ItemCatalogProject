@@ -1,15 +1,27 @@
 {% extends 'base.html' %}
 {% block content %}
 <script>
-function UserInfoToServer(fbResponseObject, meResponse) {
+function accessTokenToServer(access_token) {
     var url = "{{url_for('login')}}"
     $.ajax({
         type: "POST",
         url: url,
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify({fbResponse: fbResponseObject, me: meResponse}),
+        processData: false,
+        contentType: "application/octet-stream; charset=utf-8",
+        data: access_token,
+        dataType: "json",
         success: function(response) {
-            console.log(response)
+            if (response.success) {
+                var state = response.state;
+                var userID = response.userID;
+                console.log(response.message)
+                $('#to-profile-link').attr("href", "/" + userID + "/profile?state=" + state);
+                $('#to-account-settings-link').attr("href", "/" + userID + "/userSettings?state=" + state);
+            } else if (response.success) {
+                console.log(response.message)
+            } else {
+                console.log("Invalid Response From Server.")
+            }
         },
         failure: function() {
             console.log("failed to send user info to server.")
@@ -32,8 +44,7 @@ function loggedIn(FBauthResponse) {
     FB.api('/' + FBauthResponse.userID, function(response) {
         $('#user-settings-button').html('Welcome, ' + response.name + '!');
         $('#user-settings-button').show();
-        $('#to-profile').attr('href', '/'+ response.id+ '/profile');
-        UserInfoToServer(FBauthResponse, response);
+        accessTokenToServer(FBauthResponse.accessToken);
     });
 }
 
