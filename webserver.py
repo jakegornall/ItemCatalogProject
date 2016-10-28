@@ -68,22 +68,24 @@ def login():
 
         userCount = session.query(Users).filter(Users.fbID == login_session['fbID']).count()
         # Add user to DB if not existing.
-        if userCount == None:
+        if not userCount:
             newUser = Users(
                 fbID=login_session['fbID'],
                 name=login_session['name'],
-                email=login_session['email']
+                email=login_session['email'],
+                pictureURL=login_session['picture']
                 )
             session.add(newUser)
             session.commit()
             user = session.query(Users).filter(Users.fbID == login_session['fbID']).one()
             message = "Successfully added %s as new user!" % login_session['name']
-            return jasonify(success=True, message=message, userID=user.id, state=login_session['state'])
+            return jsonify(success=True, message=message, userID=user.id, state=login_session['state'])
         # Update user info if current user.
-        if userCount != None:
+        if userCount:
             user = session.query(Users).filter(Users.fbID == login_session['fbID']).one()
             user.name = login_session['name']
             user.email = login_session['email']
+            user.pictureURL = login_session['picture']
             session.add(user)
             session.commit()
             user = session.query(Users).filter(Users.fbID == login_session['fbID']).one()
@@ -96,21 +98,29 @@ def login():
     if request.method == 'GET':
         return render_template('login.html')
 
+@app.route('/fbdisconnect')
+def dbdisconnect():
+    facebook_id = login_session['fbID']
+    url = 'https://graph.facebook.com/%s/permissions' % facebook_id
+    h = httplib2.Http()
+    result = h.request(url, 'DELETE')[1]
+    del login_session['name']
+    del login_session['email']
+    del login_session['picture']
+    del login_session['fbID']
+    return "you have been logged out"
+
 @app.route('/<int:userID>/profile')
 def profile(userID):
     if request.args.get("state") != login_session['state']:
         return redirect('/')
     else:
         user = session.query(Users).filter(Users.id == userID).one()
-        return render_template('userProfile.html', name=user.name, pictureURL=login_session['picture'])
+        return render_template('userProfile.html', name=user.name, pictureURL=user.pictureURL)
 
 @app.route('/<int:userID>/userSettings')
 def UserSettings(userID):
     return "user Settings"
-
-@app.route('/<int:userID>/logout')
-def Logout(userID):
-    return "logout"
 
 @app.route('/clearanceItemsAPI', methods=['GET'])
 def clearanceItemsAPI():

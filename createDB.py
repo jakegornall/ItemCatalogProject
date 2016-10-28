@@ -12,6 +12,7 @@ class Users(Base):
     fbID = Column(Integer, nullable = True)
     name = Column(String(80), nullable=False)
     email = Column(String(255), nullable=True)
+    pictureURL = Column(String(255), default="http://placehold.it/200x200")
     
 class Items(Base):
     __tablename__ = 'Items'

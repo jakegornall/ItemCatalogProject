@@ -4,7 +4,6 @@
 function loggedIn(FBauthResponse) {
     $('#login-button').hide();
     $('#signup-button').hide();
-    console.log(FBauthResponse)
     FB.api('/' + FBauthResponse.userID, function(response) {
         $('#user-settings-button').html('Welcome, ' + response.name + '!');
         $('#user-settings-button').show();
