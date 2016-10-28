@@ -22,9 +22,14 @@ app = Flask(__name__)
 # makes procedure callable inside templates
 # app.jinja_env.globals.update(functionName=functionName)
 
+BKGimages = ["/static/images/bicycle-1587515_1920.jpg",
+             "/static/images/cairn-1531997_1920.jpg",
+             "/static/images/venetian-1705528_1920.jpg"]
+
 @app.route('/')
 def LandingPage():
-    return render_template('landingPage.html')
+    bkg = random.choice(BKGimages)
+    return render_template('landingPage.html', bkgImage=bkg)
 
 @app.route('/newItem', methods=['POST', 'GET'])
 def newItem():
@@ -98,25 +103,29 @@ def login():
     if request.method == 'GET':
         return render_template('login.html')
 
-@app.route('/fbdisconnect')
+@app.route('/fbdisconnect', methods=["POST"])
 def dbdisconnect():
     facebook_id = login_session['fbID']
     url = 'https://graph.facebook.com/%s/permissions' % facebook_id
     h = httplib2.Http()
     result = h.request(url, 'DELETE')[1]
+    del login_session['state']
+    del login_session['access_token']
+    del login_session['provider']
     del login_session['name']
     del login_session['email']
     del login_session['picture']
     del login_session['fbID']
-    return "you have been logged out"
+    return "user logged"
 
 @app.route('/<int:userID>/profile')
 def profile(userID):
     if request.args.get("state") != login_session['state']:
         return redirect('/')
     else:
+        bkg = random.choice(BKGimages)
         user = session.query(Users).filter(Users.id == userID).one()
-        return render_template('userProfile.html', name=user.name, pictureURL=user.pictureURL)
+        return render_template('userProfile.html', name=user.name, pictureURL=user.pictureURL, bkgImage=bkg)
 
 @app.route('/<int:userID>/userSettings')
 def UserSettings(userID):

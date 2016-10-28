@@ -52,19 +52,11 @@
         </div>
     </div>
 </header>
+<img class="bkgImage" src="{{bkgImage}}">
 <div class="content">
 {% block content %}
 {% endblock %}
 </div>
-<script>
-    // displays and hides user settings drop down menu on click.
-    $('#user-settings-button').click(function() {
-        if ($('#user-settings-menu').css('display') == 'block') {
-            $('#user-settings-menu').attr('style', 'display: none');
-        } else {
-            $('#user-settings-menu').attr('style', 'display: block');
-        }
-    });
-</script>
+<script type="text/javascript" src="{{url_for('static', filename='js/baseHTMLscript.js')}}"></script>
 </body>
 </html>
