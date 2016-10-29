@@ -31,9 +31,25 @@ def LandingPage():
     bkg = random.choice(BKGimages)
     return render_template('landingPage.html', bkgImage=bkg)
 
-@app.route('/newItem', methods=['POST', 'GET'])
+@app.route('/newItem', methods=['POST'])
 def newItem():
-    return "New Item Page"
+    if request.args.get("state") != login_session['state']:
+        return jsonify(success="False", message="invalid state parameter")
+    else:
+        newItemObj = request.json
+
+        name = newItemObj['name']
+        price = newItemObj['price']
+        description = newItemObj['description']
+        imgURL = newItemObj['imgURL']
+        qty = newItemObj['qty']
+
+        user = session.query(Users).filter(Users.fbID == login_session['fbID']).one()
+        newItem = Items(name=name, sellerID=user.id, price=price, description=description, imgURL=imgURL, qty=qty)
+        session.add(newItem)
+        session.commit()
+
+        return jsonify(success="True", message="Item Successfully Added!")
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
@@ -101,7 +117,8 @@ def login():
             return jsonify(success=False, message=message)
 
     if request.method == 'GET':
-        return render_template('login.html')
+        bkg = random.choice(BKGimages)
+        return render_template('login.html', bkgImage=bkg)
 
 @app.route('/fbdisconnect', methods=["POST"])
 def dbdisconnect():
@@ -130,7 +147,10 @@ def profile(userID):
 
 @app.route('/<int:userID>/userSettings')
 def UserSettings(userID):
-    return "user Settings"
+    if request.args.get("state") != login_session['state']:
+        return redirect('/')
+    else:
+        return "user Settings"
 
 @app.route('/clearanceItemsAPI', methods=['GET'])
 def clearanceItemsAPI():

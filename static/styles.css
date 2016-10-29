@@ -51,7 +51,7 @@ hr {
 #userInfoDiv {
     background-color: white;
     text-align: center;
-    border-radius: 15px;
+    border-radius: 10px;
     margin: 5%;
     margin-top: 7%;
     -webkit-box-shadow: 0px 2px 25px -1px rgba(0,0,0,0.75);
@@ -75,7 +75,7 @@ hr {
 }
 .catagory-div {
     margin-left: 5%;
-    border-radius: 15px;
+    border-radius: 10px;
     max-width: 100%;
     padding: 10px;
     background-color: white;
@@ -89,7 +89,7 @@ hr {
             animation: fadein 1s;
 }
 .catagory-clearance {
-    border-radius: 15px;
+    border-radius: 10px;
     max-width: 625px;
     padding: 10px;
     background-color: white;

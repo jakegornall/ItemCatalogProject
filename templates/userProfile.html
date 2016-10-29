@@ -30,42 +30,114 @@
         <h4 class="modal-title" id="myModalLabel">Sell New Item</h4>
       </div>
       <div class="modal-body">
-      	<form action="/newItem?state={{state}}" method="POST" width="100%">
+      <h6 id="new-item-message"></h6>
+      	<div id="new-item-form">
 			<label>
 			    Item Name
 			    <br>
 			    <input type="text" name="item-name">
+			    <p id="name-error"></p>
 			</label>
 			<br>
 			<label>
 			    Price
 			    <br>
 			    <input type="number" name="item-price">
+			    <p id="price-error"></p>
 			</label>
 			<br>
 		    <label>
 		      	Description
 		      	<br>
 		      	<textarea type="text" name="item-description"></textarea>
+		      	<p id="desc-error"></p>
 		    </label>
 		    <br>
 		    <label>
 		      	Image URl
 		      	<br>
 		      	<input type="url" name="item-img">
+		      	<p id="img-error"></p>
 		    </label>
 		    <br>
 		    <label>
 		      	Quantity
 		      	</br>
 		      	<input type="number" name="item-qty">
+		      	<p id="qty-error"></p>
 		    </label>
-		    <br>	      		
-	      	<input type="submit" name="submit">
-      	</form>
+		</div>
+		<img id="loader-gif" src="{{url_for('static', filename='images/ajax-loader.gif')}}" margins="auto" style="display: none">
       </div>
       <div class="modal-footer">
+      	<button id="submit-new-item-button" type="button" class="btn btn-primary">Submit New Item</button>
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <script>
+        	var formIds = ["#item-name", "#item-price", "#item-description", "#item-img", "#item-qty"]
+        	var errorIds = ["#name-error", "#price-error", "#desc-error", "#img-error", "#qty-error"]
+        	var hasError = false;
+        	$('#submit-new-item-button').click(function(){
+        		$('#new-item-message').text("processing. Do Not Close Window....")
+        		// resets error values on if resubmitting.
+        		for (i = 0; i < errorIds.length; i++) {
+        			$(errorIds[i]).text('');
+        		}
+
+        		$('#new-item-form').hide();
+        		$('#loader-gif').show();
+
+        		// validates form
+        		for (i = 0; i < formIds.length; i++) {
+        			if ($(formIds[i]).val() === null || $(formIds[i]).val() === "") {
+        				$(errorIds[i]).text('REQUIRED');
+        				hasError = true;
+        			}
+        		}
+
+        		if (hasError) {
+        			// shows form with errors.
+        			$('#loader-gif').hide();
+        			$('#new-item-form').show();
+        		} else {
+        			// sends retrieves form data and sends to server.
+	        		var name = $('#item-name').val();
+	        		var price = $('#item-price').val();
+	        		var description = $('#item-description').val();
+	        		var imgURL = $('#item-img').val();
+	        		var qty = $('#item-qty').val();
+
+	        		var newItemObj = {
+	        			"name": name,
+	        			"price": price,
+	        			"description": description,
+	        			"imgURL": imgURL,
+	        			"qty": qty
+	        		}
+
+	        		$.ajax({
+	        			type: "POST",
+	        			url: "/newItem?state={{state}}",
+	        			contentType: "application/json; charset=utf-8",
+	        			data: JSON.stringify(newItemObj), 
+	        			dataType: "json",
+	        			success: function(response) {
+	        				if (response.success === 'True') {
+	        					$('#loader-gif').hide();
+	        					$('#submit-new-item-button').hide();
+	        					$('#new-item-message').text(response.message);
+	        				} else if (response.success === 'False') {
+	        					console.log(response.message)
+	        				} else {
+	        					console.log("unknown response from server...")
+	        				}
+	        			},
+	        			failure: function() {
+	        				console.log("server not responding...")
+	        			}
+	        		})
+	        	}
+        	})
+        </script>
       </div>
     </div>
   </div>
