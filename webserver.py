@@ -125,7 +125,8 @@ def profile(userID):
     else:
         bkg = random.choice(BKGimages)
         user = session.query(Users).filter(Users.id == userID).one()
-        return render_template('userProfile.html', name=user.name, pictureURL=user.pictureURL, bkgImage=bkg)
+        userMerch = session.query(Items).filter(Items.sellerID == userID).all()
+        return render_template('userProfile.html', name=user.name, pictureURL=user.pictureURL, bkgImage=bkg, userMerch=userMerch, state=login_session['state'])
 
 @app.route('/<int:userID>/userSettings')
 def UserSettings(userID):

@@ -17,6 +17,12 @@ header {
     -moz-box-shadow: 0px 2px 25px -1px rgba(0,0,0,0.75);
     box-shadow: 0px 2px 25px -1px rgba(0,0,0,0.75);
 }
+#selling {
+    margin-top: -100px;
+}
+#sellItemModal {
+    margin-top: 100px;
+}
 .bkgImage {
     position: fixed;
     z-index: -1;

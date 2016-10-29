@@ -6,5 +6,68 @@
 		<img class="img-circle" src="{{pictureURL}}" width="200px" height="200px">
 	</div>
 	<h1 id="name">{{name}}</h1>
+	<div id="selling">
+		<button id="sell-item" class="btn btn-lg btn-success" data-toggle="modal" data-target="#sellItemModal">Sell Item</button>
+		<h2>Items You Are Selling</h2>
+		{% for item in userMerch %}
+		<div class="item-container">
+			<img src="{{item.imageURL}}">
+			<h3>{{item.name}}</h3>
+			<h4>{{item.price}}</h4>
+			<p>{{item.description}}</p>
+			<p>{{item.qty}}} Available</p>
+		</div>
+		{% endfor %}
+	</div>
+</div>
+
+<!-- Sell Item Modal -->
+<div class="modal fade text-center" id="sellItemModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Sell New Item</h4>
+      </div>
+      <div class="modal-body">
+      	<form action="/newItem?state={{state}}" method="POST" width="100%">
+			<label>
+			    Item Name
+			    <br>
+			    <input type="text" name="item-name">
+			</label>
+			<br>
+			<label>
+			    Price
+			    <br>
+			    <input type="number" name="item-price">
+			</label>
+			<br>
+		    <label>
+		      	Description
+		      	<br>
+		      	<textarea type="text" name="item-description"></textarea>
+		    </label>
+		    <br>
+		    <label>
+		      	Image URl
+		      	<br>
+		      	<input type="url" name="item-img">
+		    </label>
+		    <br>
+		    <label>
+		      	Quantity
+		      	</br>
+		      	<input type="number" name="item-qty">
+		    </label>
+		    <br>	      		
+	      	<input type="submit" name="submit">
+      	</form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}
