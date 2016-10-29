@@ -1,80 +1,87 @@
 body, .container {
-	width: 100%;
-	height: 100%;
+    width: 100%;
+    height: 100%;
 }
 body {
-	background-color: lightblue;
+    background-color: lightblue;
 }
 header {
-	position: fixed;
-	z-index: 9999;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 55px;
-	background-color: white;
-	-webkit-box-shadow: 0px 2px 25px -1px rgba(0,0,0,0.75);
+    position: fixed;
+    z-index: 9999;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 55px;
+    background-color: white;
+    -webkit-box-shadow: 0px 2px 25px -1px rgba(0,0,0,0.75);
     -moz-box-shadow: 0px 2px 25px -1px rgba(0,0,0,0.75);
-	box-shadow: 0px 2px 25px -1px rgba(0,0,0,0.75);
+    box-shadow: 0px 2px 25px -1px rgba(0,0,0,0.75);
+}
+#selling {
+    margin-top: -100px;
+}
+#sellItemModal {
+    margin-top: 100px;
 }
 .bkgImage {
-	position: fixed;
-	z-index: 0;
-	max-height: 100%;
-	min-width: 100%;
+    position: fixed;
+    z-index: -1;
+    max-height: 100%;
+    min-width: 100%;
 }
 .content {
-	margin-top: 55px;
-	padding-top: 20px;
+    margin-top: 55px;
+    padding-top: 20px;
 }
 #user-settings-menu {
 
 }
 .user-settings-menu-item {
-	padding: 10px;
-	background-color: white;
-	border-bottom: 2px solid lightgrey;
+    padding: 10px;
+    background-color: white;
+    border-bottom: 2px solid lightgrey;
 }
 header h1, form, button {
-	margin-top: 5px;
+    margin-top: 5px;
 }
 hr {
-	margin: 5px;
-	margin-bottom: 10px;
+    margin: 5px;
+    margin-bottom: 10px;
 }
 #userInfoDiv {
-	background-color: white;
-	text-align: center;
-	border-radius: 15px;
-	margin: 5%;
-	-webkit-box-shadow: 0px 2px 25px -1px rgba(0,0,0,0.75);
+    background-color: white;
+    text-align: center;
+    border-radius: 15px;
+    margin: 5%;
+    margin-top: 7%;
+    -webkit-box-shadow: 0px 2px 25px -1px rgba(0,0,0,0.75);
     -moz-box-shadow: 0px 2px 25px -1px rgba(0,0,0,0.75);
-	box-shadow: 0px 2px 25px -1px rgba(0,0,0,0.75);
+    box-shadow: 0px 2px 25px -1px rgba(0,0,0,0.75);
 }
 #name {
-	position: relative;
-	bottom: 100px;
+    position: relative;
+    bottom: 100px;
 }
 .img-circle {
-	border: 5px solid white;
-	-webkit-box-shadow: 0px 2px 25px -1px rgba(0,0,0,0.75);
+    border: 5px solid white;
+    -webkit-box-shadow: 0px 2px 25px -1px rgba(0,0,0,0.75);
     -moz-box-shadow: 0px 2px 25px -1px rgba(0,0,0,0.75);
-	box-shadow: 0px 2px 25px -1px rgba(0,0,0,0.75);
+    box-shadow: 0px 2px 25px -1px rgba(0,0,0,0.75);
 }
 #ProfilePicDiv {
-	position: relative;
-	bottom: 100px;
-	margin: auto;
+    position: relative;
+    bottom: 100px;
+    margin: auto;
 }
 .catagory-div {
-	margin-left: 5%;
-	border-radius: 15px;
-	max-width: 100%;
-	padding: 10px;
-	background-color: white;
-	-webkit-box-shadow: 0px 2px 25px -1px rgba(0,0,0,0.75);
+    margin-left: 5%;
+    border-radius: 15px;
+    max-width: 100%;
+    padding: 10px;
+    background-color: white;
+    -webkit-box-shadow: 0px 2px 25px -1px rgba(0,0,0,0.75);
     -moz-box-shadow: 0px 2px 25px -1px rgba(0,0,0,0.75);
-	box-shadow: 0px 2px 25px -1px rgba(0,0,0,0.75);
+    box-shadow: 0px 2px 25px -1px rgba(0,0,0,0.75);
     -webkit-animation: fadein 1s; /* Safari, Chrome and Opera > 12.1 */
        -moz-animation: fadein 1s; /* Firefox < 16 */
         -ms-animation: fadein 1s; /* Internet Explorer */
@@ -82,13 +89,13 @@ hr {
             animation: fadein 1s;
 }
 .catagory-clearance {
-	border-radius: 15px;
-	max-width: 625px;
-	padding: 10px;
-	background-color: white;
-	-webkit-box-shadow: 0px 2px 25px -1px rgba(0,0,0,0.75);
+    border-radius: 15px;
+    max-width: 625px;
+    padding: 10px;
+    background-color: white;
+    -webkit-box-shadow: 0px 2px 25px -1px rgba(0,0,0,0.75);
     -moz-box-shadow: 0px 2px 25px -1px rgba(0,0,0,0.75);
-	box-shadow: 0px 2px 25px -1px rgba(0,0,0,0.75);
+    box-shadow: 0px 2px 25px -1px rgba(0,0,0,0.75);
     -webkit-animation: fadein 1s; /* Safari, Chrome and Opera > 12.1 */
        -moz-animation: fadein 1s; /* Firefox < 16 */
         -ms-animation: fadein 1s; /* Internet Explorer */
@@ -96,13 +103,13 @@ hr {
             animation: fadein 1s;
 }
 .cat-div-con {
-	align-items: right;
+    align-items: right;
 }
 .catagory-clearance h2 {
-	margin-top: 0px;
+    margin-top: 0px;
 }
 .row {
-	margin-bottom: 10px;
+    margin-bottom: 10px;
 }
 .clearance-item {
     -webkit-animation: fadein 2s; /* Safari, Chrome and Opera > 12.1 */
@@ -113,24 +120,27 @@ hr {
 }
 
 @media (max-width: 992px) {
-	.login-box {
-		text-align: left;
-	}
-	.content {
-		margin-top: 100px;
-	}
-	header {
-		height: 100px;
-	}
-	.search-box {
-		display: none;
-	}
-	.catagory-div, .catagory-clearance {
-		width: 100%;
-		margin: auto;
-		margin-top: 15px;
-		max-width: 100%;
-	}
+    .login-box {
+        text-align: left;
+    }
+    .content {
+        margin-top: 100px;
+    }
+    #userInfoDiv {
+        margin-top: 100px;
+    }
+    header {
+        height: 100px;
+    }
+    .search-box {
+        display: none;
+    }
+    .catagory-div, .catagory-clearance {
+        width: 100%;
+        margin: auto;
+        margin-top: 15px;
+        max-width: 100%;
+    }
 }
 
 @keyframes fadein {
