@@ -10,12 +10,74 @@
 		<button id="sell-item" class="btn btn-lg btn-success" data-toggle="modal" data-target="#sellItemModal">Sell Item</button>
 		<h2>Items You Are Selling</h2>
 		{% for item in userMerch %}
-		<div class="item-container">
+		<div id="item-{{item.id}}" class="item-container">
 			<img src="{{item.imageURL}}" width="100">
-			<h3>{{item.name}}</h3>
+			<h3 style="margin-bottom: 2px">{{item.name}}</h3>
+			<button id="edit-{{item.id}}" class="btn btn-default btn-xs">Edit</button>
+			<button class="btn btn-danger btn-xs" data-toggle="modal" data-target="#delete-{{item.id}}-modal">Delete</button>
 			<h4>${{item.price}}</h4>
 			<p>{{item.description}}</p>
 			<p>{{item.qty}} Available</p>
+		</div>
+		<script>
+			// delete button ajax call.
+			$(document).ready(function() {
+				$('#delete-{{item.id}}').click(function(){
+					$('#delete-{{item.id}}-confirm-buttons').hide();
+					$('#delete-{{item.id}}-message').text('Processing. Do Not Close Window...');
+					$('#delete-{{item.id}}-loader').show();
+					$.ajax({
+						type: 'POST',
+						url: '/{{item.id}}/deleteItem?state={{state}}',
+						success: function(response) {
+							if (response.success === 'True') {
+								$('#delete-{{item.id}}-loader').hide();
+								$('#delete-{{item.id}}-message').text('Item Successfully Deleted!');
+								$('#close-{{item.id}}-modal').show();
+								var itemDivHeight = $('#item-{{item.id}}').height();
+								$('#item-{{item.id}}').fadeOut(1000, function() { $(this).remove(); });
+								var UserInfoDivHeight = $('#userInfoDiv').height();
+								var newHeight = UserInfoDivHeight - itemDivHeight;
+								$('#userInfoDiv').animate({height:newHeight});
+							} else if (response.success === 'False') {
+								$('#delete-{{item.id}}-loader').hide();
+								$('#delete-{{item.id}}-message').text('Could Not Delete Item.');
+								$('#close-{{item.id}}-modal').show();
+							} else {
+								$('#delete-{{item.id}}-loader').hide();
+								$('#delete-{{item.id}}-message').text('Unknown response from server.');
+								$('#close-{{item.id}}-modal').show();
+							}
+						},
+						failure: function() {
+							$('#delete-{{item.id}}-loader').hide();
+							$('#delete-{{item.id}}-message').text('Unable to connect to server...');
+							$('#close-{{item.id}}-modal').show();
+						}
+					})
+				})
+			})
+		</script>
+
+		<!-- Delete Item Confirmation Modal -->
+		<div class="modal fade" id="delete-{{item.id}}-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="margin-top: 150px">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        <h4 class="modal-title" id="myModalLabel">Confirm Deletion of {{item.name}}?</h4>
+		      </div>
+		      <div class="modal-body">
+		      	<div id="delete-{{item.id}}-confirm-buttons">
+			        <button class="btn btn-danger btn-lg" id="delete-{{item.id}}">Confirm Delete</button>
+			        <button type="button" class="btn btn-default btn-lg" data-dismiss="modal">Cancel</button>
+		        </div>
+		        <p id="delete-{{item.id}}-message"></p>
+		        <img id="delete-{{item.id}}-loader" src="{{url_for('static', filename='images/ajax-loader.gif')}}" style="display: none">
+		        <button id="close-{{item.id}}-modal" type="button" class="btn btn-default btn-lg" data-dismiss="modal" style="display: none">Close</button>
+		      </div>
+		    </div>
+		  </div>
 		</div>
 		{% endfor %}
 	</div>
@@ -61,7 +123,7 @@
       </div>
       <div class="modal-footer">
       	<button id="submit-new-item-button" type="button" class="btn btn-primary">Submit New Item</button>
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button id="cancel-new-item-button" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
         <script>
         var formIds = ["#item-name", "#item-price", "#item-description", "#item-img", "#item-qty"]
         var errorIds = ["#name-error", "#price-error", "#desc-error", "#img-error", "#qty-error"]
@@ -122,6 +184,7 @@
 	        				if (response.success === 'True') {
 	        					$('#loader-gif').hide();
 	        					$('#new-item-message').text(response.message);
+	        					$('#cancel-new-item-button').text('Close');
 	        				} else if (response.success === 'False') {
 	        					console.log(response.message)
 	        					$('#loader-gif').hide();
@@ -147,6 +210,18 @@
 	        	}
         	})
         })
+
+        // resets new Item form to default state when modal is closed.
+        $(document).ready(setTimeout(function() {
+        	$('#cancel-new-item-button').click(function(){
+        		$('#cancel-new-item-button').text('Cancel');
+        		$('#new-item-form').show();
+        		$('#new-item-message').text('');
+        		for (i = 0; i < formIds.length; i++) {
+        			$(formIds[i]).val('');
+        		}
+        	})
+        }, 2000))
         </script>
       </div>
     </div>

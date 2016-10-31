@@ -66,6 +66,26 @@ def newItem():
 
         return jsonify(success="True", message="Item Successfully Added!")
 
+@app.route('/<int:itemID>/deleteItem', methods=['POST'])
+def deleteItem(itemID):
+    if request.args.get("state") != login_session['state']:
+        return jsonify(success="False", message="invalid state parameter")
+    else:
+        try:
+            item = session.query(Items).filter(Items.id == itemID).one()
+        except:
+            return jsonify(success="False", message="Item not in database.")
+        user = session.query(Users).filter(Users.fbID == login_session['fbID']).one()
+        if item.sellerID != user.id:
+            return jsonify(success="False", message="You can only delete items that you are selling.")
+        try:
+            session.delete(item)
+            session.commit()
+        except:
+            return jsonify(success="False", message="Unable to delete item at this time.")
+        return jsonify(success="True", message="Item Successfully Deleted!")
+
+
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method == 'POST':
@@ -157,7 +177,7 @@ def profile(userID):
     else:
         bkg = random.choice(BKGimages)
         user = session.query(Users).filter(Users.id == userID).one()
-        userMerch = session.query(Items).all()
+        userMerch = session.query(Items).filter(Items.sellerID == user.id).all()
         return render_template('userProfile.html', name=user.name, pictureURL=user.pictureURL, bkgImage=bkg, userMerch=userMerch, state=login_session['state'])
 
 @app.route('/<int:userID>/userSettings')
