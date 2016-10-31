@@ -48,6 +48,10 @@ hr {
     margin: 5px;
     margin-bottom: 10px;
 }
+
+.error-message {
+	color: red;
+}
 #userInfoDiv {
     background-color: white;
     text-align: center;

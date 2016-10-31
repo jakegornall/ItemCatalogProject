@@ -9,6 +9,7 @@ from createDB import Base, Items, Users
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import json
+import re
 
 # Create session and connect to DB
 engine = create_engine('sqlite:///ItemCatalog.db')
@@ -26,6 +27,8 @@ BKGimages = ["/static/images/bicycle-1587515_1920.jpg",
              "/static/images/cairn-1531997_1920.jpg",
              "/static/images/venetian-1705528_1920.jpg"]
 
+urlRegEx = re.compile(r"/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/")
+
 @app.route('/')
 def LandingPage():
     bkg = random.choice(BKGimages)
@@ -36,18 +39,30 @@ def newItem():
     if request.args.get("state") != login_session['state']:
         return jsonify(success="False", message="invalid state parameter")
     else:
-        newItemObj = request.json
+        try:
+            newItemObj = request.json
 
-        name = newItemObj['name']
-        price = newItemObj['price']
-        description = newItemObj['description']
-        imgURL = newItemObj['imgURL']
-        qty = newItemObj['qty']
+            name = newItemObj['name']
+            price = newItemObj['price']
+            description = newItemObj['description']
+            imgURL = newItemObj['imgURL']
+            qty = newItemObj['qty']
+        except:
+            return jsonify(success="False", message="Error unpacking json object.")
 
-        user = session.query(Users).filter(Users.fbID == login_session['fbID']).one()
-        newItem = Items(name=name, sellerID=user.id, price=price, description=description, imgURL=imgURL, qty=qty)
-        session.add(newItem)
-        session.commit()
+        if qty <= 0:
+            return jsonify(success="False", message="Qty must be greater than 0.")
+
+        if not imgURL:
+            return jsonify(success="False", message="Invalid image url.")
+
+        try:
+            user = session.query(Users).filter(Users.fbID == login_session['fbID']).one()
+            newItem = Items(name=name, sellerID=user.id, price=price, description=description, imageURL=imgURL, qty=qty)
+            session.add(newItem)
+            session.commit()
+        except:
+            return jsonify(success="False", message="Item addition unsuccessful.")
 
         return jsonify(success="True", message="Item Successfully Added!")
 
@@ -142,7 +157,7 @@ def profile(userID):
     else:
         bkg = random.choice(BKGimages)
         user = session.query(Users).filter(Users.id == userID).one()
-        userMerch = session.query(Items).filter(Items.sellerID == userID).all()
+        userMerch = session.query(Items).all()
         return render_template('userProfile.html', name=user.name, pictureURL=user.pictureURL, bkgImage=bkg, userMerch=userMerch, state=login_session['state'])
 
 @app.route('/<int:userID>/userSettings')
@@ -162,6 +177,10 @@ def saleItemsAPI():
     saleItems = session.query(Items).filter(Items.onSale == 'True').all()
     return jsonify(results=[e.serialize() for e in saleItems])
 
+@app.route('/allItemsAPI', methods=['GET'])
+def allItems():
+    items = session.query(Items).all()
+    return jsonify(results=[e.serialize() for e in items])
 
 if __name__ == "__main__":
     app.secret_key = 'super_secret_key'

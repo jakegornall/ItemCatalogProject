@@ -11,11 +11,11 @@
 		<h2>Items You Are Selling</h2>
 		{% for item in userMerch %}
 		<div class="item-container">
-			<img src="{{item.imageURL}}">
+			<img src="{{item.imageURL}}" width="100">
 			<h3>{{item.name}}</h3>
-			<h4>{{item.price}}</h4>
+			<h4>${{item.price}}</h4>
 			<p>{{item.description}}</p>
-			<p>{{item.qty}}} Available</p>
+			<p>{{item.qty}} Available</p>
 		</div>
 		{% endfor %}
 	</div>
@@ -32,40 +32,30 @@
       <div class="modal-body">
       <h6 id="new-item-message"></h6>
       	<div id="new-item-form">
-			<label>
 			    Item Name
 			    <br>
-			    <input type="text" name="item-name">
-			    <p id="name-error"></p>
-			</label>
+			    <input id="item-name" type="text" name="item-name">
+			    <p id="name-error" class="error-message"></p>
 			<br>
-			<label>
 			    Price
 			    <br>
-			    <input type="number" name="item-price">
-			    <p id="price-error"></p>
-			</label>
+			    <input id="item-price" type="number" name="item-price">
+			    <p id="price-error" class="error-message"></p>
 			<br>
-		    <label>
 		      	Description
 		      	<br>
-		      	<textarea type="text" name="item-description"></textarea>
-		      	<p id="desc-error"></p>
-		    </label>
+		      	<textarea id="item-description" type="text" name="item-description"></textarea>
+		      	<p id="desc-error" class="error-message"></p>
 		    <br>
-		    <label>
 		      	Image URl
 		      	<br>
-		      	<input type="url" name="item-img">
-		      	<p id="img-error"></p>
-		    </label>
+		      	<input id="item-img" type="url" name="item-img">
+		      	<p id="img-error" class="error-message"></p>
 		    <br>
-		    <label>
 		      	Quantity
 		      	</br>
-		      	<input type="number" name="item-qty">
-		      	<p id="qty-error"></p>
-		    </label>
+		      	<input id="item-qty" type="number" name="item-qty">
+		      	<p id="qty-error" class="error-message"></p>
 		</div>
 		<img id="loader-gif" src="{{url_for('static', filename='images/ajax-loader.gif')}}" margins="auto" style="display: none">
       </div>
@@ -73,10 +63,13 @@
       	<button id="submit-new-item-button" type="button" class="btn btn-primary">Submit New Item</button>
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
         <script>
-        	var formIds = ["#item-name", "#item-price", "#item-description", "#item-img", "#item-qty"]
-        	var errorIds = ["#name-error", "#price-error", "#desc-error", "#img-error", "#qty-error"]
-        	var hasError = false;
+        var formIds = ["#item-name", "#item-price", "#item-description", "#item-img", "#item-qty"]
+        var errorIds = ["#name-error", "#price-error", "#desc-error", "#img-error", "#qty-error"]
+        var errorMessages = ["Name Required!", "Price required!", "Description required!", "Image URL required!", "Qty required!"]
+        var hasError = false;
+        $(document).ready(function(){
         	$('#submit-new-item-button').click(function(){
+        		hasError = false;
         		$('#new-item-message').text("processing. Do Not Close Window....")
         		// resets error values on if resubmitting.
         		for (i = 0; i < errorIds.length; i++) {
@@ -85,11 +78,12 @@
 
         		$('#new-item-form').hide();
         		$('#loader-gif').show();
+        		$('#submit-new-item-button').hide();
 
         		// validates form
         		for (i = 0; i < formIds.length; i++) {
-        			if ($(formIds[i]).val() === null || $(formIds[i]).val() === "") {
-        				$(errorIds[i]).text('REQUIRED');
+        			if ($(formIds[i]).val() === null || $(formIds[i]).val() === "" || $(formIds[i]).val() === undefined) {
+        				$(errorIds[i]).text(errorMessages[i]);
         				hasError = true;
         			}
         		}
@@ -97,7 +91,9 @@
         		if (hasError) {
         			// shows form with errors.
         			$('#loader-gif').hide();
+        			$('#new-item-message').text('');
         			$('#new-item-form').show();
+        			$('#submit-new-item-button').show();
         		} else {
         			// sends retrieves form data and sends to server.
 	        		var name = $('#item-name').val();
@@ -114,6 +110,8 @@
 	        			"qty": qty
 	        		}
 
+	        		console.log(newItemObj)
+
 	        		$.ajax({
 	        			type: "POST",
 	        			url: "/newItem?state={{state}}",
@@ -123,20 +121,32 @@
 	        			success: function(response) {
 	        				if (response.success === 'True') {
 	        					$('#loader-gif').hide();
-	        					$('#submit-new-item-button').hide();
 	        					$('#new-item-message').text(response.message);
 	        				} else if (response.success === 'False') {
 	        					console.log(response.message)
+	        					$('#loader-gif').hide();
+	        					$('#new-item-message').text(response.message);
+        						$('#new-item-form').show();
+        						$('#submit-new-item-button').show();
 	        				} else {
 	        					console.log("unknown response from server...")
+	        					$('#loader-gif').hide();
+        						$('#new-item-message').text('unknown response from server...');
+        						$('#new-item-form').show();
+        						$('#submit-new-item-button').show();
 	        				}
 	        			},
 	        			failure: function() {
 	        				console.log("server not responding...")
+	        				$('#loader-gif').hide();
+        					$('#new-item-message').text('server not responding...');
+        					$('#new-item-form').show();
+        					$('#submit-new-item-button').show();
 	        			}
 	        		})
 	        	}
         	})
+        })
         </script>
       </div>
     </div>
