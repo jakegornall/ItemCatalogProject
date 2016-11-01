@@ -94,30 +94,40 @@
       <div class="modal-body">
       <h6 id="new-item-message"></h6>
       	<div id="new-item-form">
+      		<label>
 			    Item Name
 			    <br>
 			    <input id="item-name" type="text" name="item-name">
 			    <p id="name-error" class="error-message"></p>
+			</label>
 			<br>
+			<label>
 			    Price
 			    <br>
 			    <input id="item-price" type="number" name="item-price">
 			    <p id="price-error" class="error-message"></p>
+			</label>
 			<br>
+			<label>
 		      	Description
 		      	<br>
 		      	<textarea id="item-description" type="text" name="item-description"></textarea>
 		      	<p id="desc-error" class="error-message"></p>
+		    </label>
 		    <br>
+		    <label>
 		      	Image URl
 		      	<br>
 		      	<input id="item-img" type="url" name="item-img">
 		      	<p id="img-error" class="error-message"></p>
+		    </label>
 		    <br>
+		    <label>
 		      	Quantity
 		      	</br>
 		      	<input id="item-qty" type="number" name="item-qty">
 		      	<p id="qty-error" class="error-message"></p>
+		    </label>
 		</div>
 		<img id="loader-gif" src="{{url_for('static', filename='images/ajax-loader.gif')}}" margins="auto" style="display: none">
       </div>
@@ -129,10 +139,12 @@
         var errorIds = ["#name-error", "#price-error", "#desc-error", "#img-error", "#qty-error"]
         var errorMessages = ["Name Required!", "Price required!", "Description required!", "Image URL required!", "Qty required!"]
         var hasError = false;
+
         $(document).ready(function(){
+        	// initiates new item addition process.
         	$('#submit-new-item-button').click(function(){
         		hasError = false;
-        		$('#new-item-message').text("processing. Do Not Close Window....")
+        		$('#new-item-message').text("Processing. Do Not Close Window....")
         		// resets error values on if resubmitting.
         		for (i = 0; i < errorIds.length; i++) {
         			$(errorIds[i]).text('');
