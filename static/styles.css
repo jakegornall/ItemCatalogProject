@@ -22,9 +22,15 @@ header {
     border-radius: 10px;
     padding: 5px;
     margin: 20px;
+    height: 300px;
+    max-width: calc(100%/4 - 40px);
     -webkit-box-shadow: 0px 2px 25px -1px rgba(0,0,0,0.75);
     -moz-box-shadow: 0px 2px 25px -1px rgba(0,0,0,0.75);
     box-shadow: 0px 2px 25px -1px rgba(0,0,0,0.75);
+}
+.item-container img {
+	max-width: 200px;
+	max-height: 200px;
 }
 #selling {
     margin-top: -100px;
@@ -155,6 +161,9 @@ hr {
         margin: auto;
         margin-top: 15px;
         max-width: 100%;
+    }
+    .item-container {
+    	max-width: 100%;
     }
 }
 

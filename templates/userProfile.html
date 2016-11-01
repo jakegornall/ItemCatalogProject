@@ -9,11 +9,16 @@
 	<div id="selling">
 		<button id="sell-item" class="btn btn-lg btn-success" data-toggle="modal" data-target="#sellItemModal">Sell Item</button>
 		<h2>Items You Are Selling</h2>
+		<div class="container" width="100%">
+		<div class="row">
 		{% for item in userMerch %}
-		<div id="item-{{item.id}}" class="item-container">
-			<img src="{{item.imageURL}}" width="100">
+		<div id="item-{{item.id}}" class="item-container col-md-3">
+			<img class="item-img" src="{{item.imageURL}}">
+
 			<h3 style="margin-bottom: 2px">{{item.name}}</h3>
-			<button id="edit-{{item.id}}" class="btn btn-default btn-xs">Edit</button>
+			<input style="display: none" type="text" name="edit-{{item.id}}-name" value="{{item.name}}">
+			<div style="display: inline"><img src="{{url_for('static', filename='images/edit.png')}}"></div>
+
 			<button class="btn btn-danger btn-xs" data-toggle="modal" data-target="#delete-{{item.id}}-modal">Delete</button>
 			<h4>${{item.price}}</h4>
 			<p>{{item.description}}</p>
@@ -36,9 +41,6 @@
 								$('#close-{{item.id}}-modal').show();
 								var itemDivHeight = $('#item-{{item.id}}').height();
 								$('#item-{{item.id}}').fadeOut(1000, function() { $(this).remove(); });
-								var UserInfoDivHeight = $('#userInfoDiv').height();
-								var newHeight = UserInfoDivHeight - itemDivHeight;
-								$('#userInfoDiv').animate({height:newHeight});
 							} else if (response.success === 'False') {
 								$('#delete-{{item.id}}-loader').hide();
 								$('#delete-{{item.id}}-message').text('Could Not Delete Item.');
@@ -80,6 +82,8 @@
 		  </div>
 		</div>
 		{% endfor %}
+		</div>
+		</div>
 	</div>
 </div>
 
@@ -154,7 +158,7 @@
         		$('#loader-gif').show();
         		$('#submit-new-item-button').hide();
 
-        		// validates form
+        		// validates form input
         		for (i = 0; i < formIds.length; i++) {
         			if ($(formIds[i]).val() === null || $(formIds[i]).val() === "" || $(formIds[i]).val() === undefined) {
         				$(errorIds[i]).text(errorMessages[i]);
@@ -169,13 +173,14 @@
         			$('#new-item-form').show();
         			$('#submit-new-item-button').show();
         		} else {
-        			// sends retrieves form data and sends to server.
+        			// sends retrieves form data.
 	        		var name = $('#item-name').val();
 	        		var price = $('#item-price').val();
 	        		var description = $('#item-description').val();
 	        		var imgURL = $('#item-img').val();
 	        		var qty = $('#item-qty').val();
 
+	        		// prepares data to be sent to server.
 	        		var newItemObj = {
 	        			"name": name,
 	        			"price": price,
@@ -184,8 +189,7 @@
 	        			"qty": qty
 	        		}
 
-	        		console.log(newItemObj)
-
+	        		// sends data object to server via ajax call.
 	        		$.ajax({
 	        			type: "POST",
 	        			url: "/newItem?state={{state}}",
@@ -224,16 +228,18 @@
         })
 
         // resets new Item form to default state when modal is closed.
-        $(document).ready(setTimeout(function() {
+        $(document).ready(function() {
         	$('#cancel-new-item-button').click(function(){
-        		$('#cancel-new-item-button').text('Cancel');
-        		$('#new-item-form').show();
-        		$('#new-item-message').text('');
-        		for (i = 0; i < formIds.length; i++) {
-        			$(formIds[i]).val('');
-        		}
+        		setTimeout(function() {
+        			$('#cancel-new-item-button').text('Cancel');
+        			$('#new-item-form').show();
+        			$('#new-item-message').text('');
+        			for (i = 0; i < formIds.length; i++) {
+        				$(formIds[i]).val('');
+        			}
+        		}, 2000)
         	})
-        }, 2000))
+        })
         </script>
       </div>
     </div>

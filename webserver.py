@@ -53,8 +53,8 @@ def newItem():
         if qty <= 0:
             return jsonify(success="False", message="Qty must be greater than 0.")
 
-        if not imgURL:
-            return jsonify(success="False", message="Invalid image url.")
+        if not (name, price, description, imgURL, qty):
+            return jsonify(success="False", message="All fields required.")
 
         try:
             user = session.query(Users).filter(Users.fbID == login_session['fbID']).one()
@@ -75,14 +75,18 @@ def deleteItem(itemID):
             item = session.query(Items).filter(Items.id == itemID).one()
         except:
             return jsonify(success="False", message="Item not in database.")
+
         user = session.query(Users).filter(Users.fbID == login_session['fbID']).one()
+
         if item.sellerID != user.id:
             return jsonify(success="False", message="You can only delete items that you are selling.")
+
         try:
             session.delete(item)
             session.commit()
         except:
             return jsonify(success="False", message="Unable to delete item at this time.")
+
         return jsonify(success="True", message="Item Successfully Deleted!")
 
 
