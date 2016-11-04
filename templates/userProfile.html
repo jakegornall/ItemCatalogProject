@@ -13,17 +13,214 @@
 		<div class="row">
 		{% for item in userMerch %}
 		<div id="item-{{item.id}}" class="item-container col-md-3">
-			<img class="item-img" src="{{item.imageURL}}">
+			<img id="{{item.id}}-img" class="item-img" src="{{item.imageURL}}">
+			<button id="edit-{{item.id}}-img-btn"><img style="display: inline; width: 20px" src="{{url_for('static', filename='images/edit.png')}}"></button>
+			<input id="edit-{{item.id}}-img" style="display: none" type="text" name="edit-{{item.id}}-img" value="{{item.imageURL}}">
+			<p id="{{item.id}}-img-error"></p>
+			<button style="display: none" id="{{item.id}}-img-cancel" class="btn btn-default btn-xs">Cancel</button>
+			<button style="display: none" id="{{item.id}}-img-save" class="btn btn-primary btn-xs">Save Changes</button>
 
-			<h3 style="margin-bottom: 2px">{{item.name}}</h3>
-			<input style="display: none" type="text" name="edit-{{item.id}}-name" value="{{item.name}}">
-			<div style="display: inline"><img src="{{url_for('static', filename='images/edit.png')}}"></div>
+			<h3 id="{{item.id}}-name" style="margin-bottom: 2px; display: inline">{{item.name}}</h3>
+			<button id="edit-{{item.id}}-name-btn"><img style="display: inline; width: 20px" src="{{url_for('static', filename='images/edit.png')}}"></button>
+			<input id="edit-{{item.id}}-name" style="display: none" type="text" name="edit-{{item.id}}-name" value="{{item.name}}">
+			<p id="{{item.id}}-name-error"></p>
+			<button style="display: none" id="{{item.id}}-name-cancel" class="btn btn-default btn-xs">Cancel</button>
+			<button style="display: none" id="{{item.id}}-name-save" class="btn btn-primary btn-xs">Save Changes</button>
 
-			<button class="btn btn-danger btn-xs" data-toggle="modal" data-target="#delete-{{item.id}}-modal">Delete</button>
-			<h4>${{item.price}}</h4>
-			<p>{{item.description}}</p>
-			<p>{{item.qty}} Available</p>
+			
+			<h4 id="{{item.id}}-price" style="display: inline">${{item.price}}</h4>
+			<button id="edit-{{item.id}}-price-btn"><img style="display: inline; width: 20px" src="{{url_for('static', filename='images/edit.png')}}"></button>
+			<input id="edit-{{item.id}}-price" style="display: none" type="text" name="edit-{{item.id}}-price" value="{{item.price}}">
+			<p id="{{item.id}}-price-error"></p>
+			<button style="display: none" id="{{item.id}}-price-cancel" class="btn btn-default btn-xs">Cancel</button>
+			<button style="display: none" id="{{item.id}}-price-save" class="btn btn-primary btn-xs">Save Changes</button>
+
+			<p id="{{item.id}}-desc" style="display: inline">{{item.description}}</p>
+			<button id="edit-{{item.id}}-desc-btn"><img style="display: inline; width: 20px" src="{{url_for('static', filename='images/edit.png')}}"></button>
+			<input id="edit-{{item.id}}-desc" style="display: none" type="text" name="edit-{{item.id}}-desc" value="{{item.description}}">
+			<p id="{{item.id}}-desc-error"></p>
+			<button style="display: none" id="{{item.id}}-desc-cancel" class="btn btn-default btn-xs">Cancel</button>
+			<button style="display: none" id="{{item.id}}-desc-save" class="btn btn-primary btn-xs">Save Changes</button>
+
+			<p id="{{item.id}}-qty" style="display: inline">{{item.qty}} Available</p>
+			<button id="edit-{{item.id}}-qty-btn"><img style="display: inline; width: 20px" src="{{url_for('static', filename='images/edit.png')}}"></button>
+			<input id="edit-{{item.id}}-qty" style="display: none" type="number" name="edit-{{item.id}}-qty" value="{{item.qty}}">
+			<p id="{{item.id}}-qty-error"></p>
+			<button style="display: none" id="{{item.id}}-qty-cancel" class="btn btn-default btn-xs">Cancel</button>
+			<button style="display: none" id="{{item.id}}-qty-save" class="btn btn-primary btn-xs">Save Changes</button>
+
+			<button id="{{item.id}}-delete-init" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#delete-{{item.id}}-modal">Delete</button>
 		</div>
+		<script>
+			var SubmitChanges{{item.id}} = function() {
+				var imgURL = $('#edit-{{item.id}}-img').val();
+				var name = $('#edit-{{item.id}}-name').val();
+				var price = $('#edit-{{item.id}}-price').val();
+				var desc = $('#edit-{{item.id}}-desc').val();
+				var qty = $('#edit-{{item.id}}-qty').val();
+
+				var formInputs = [imgURL, name, price, desc, qty];
+				var errorIds = ['#{{item.id}}-img-error', "#{{item.id}}-name-error", "#{{item.id}}-price-error", "#{{item.id}}-desc-error", "#{{item.id}}-qty-error"];
+				var errorMessages = ["image URL required.", "name required.", "price required.", "description required.", "quantity required."];
+
+				var hasError = false;
+
+				// validates form input
+        		for (i = 0; i < formInputs.length; i++) {
+        			if (formInputs[i] === null || formInputs[i] === "" || formInputs[i] === undefined) {
+        				$(errorIds[i]).text(errorMessages[i]);
+        				hasError = true;
+        			} else {
+
+        				hasError = false;
+        			}
+        		}
+
+        		if (hasError === false) {
+        			// package new info to json object.
+        			var editedObj = {
+        				"name": name,
+        				"imgURL": imgURL,
+        				"price": price,
+        				"desc": desc,
+        				"qty": qty
+        			};
+
+        			// send new info to server.
+        			$.ajax({
+        				type: 'POST',
+        				url: '/{{item.id}}/editItem?state={{state}}',
+        				contentType: "application/json;charset=utf-8",
+        				data: JSON.stringify(editedObj),
+        				dataType: 'json',
+        				success: function(response) {
+        					if (response.success === "True") {
+        						$('#{{item.id}}-img').attr('src', imgURL);
+        						$('#edit-{{item.id}}-img').val(imgURL);
+
+        						$('#{{item.id}}-name').text(name);
+        						$('#edit-{{item.id}}-name').val(name);
+
+        						$('#{{item.id}}-price').text('$' + price);
+        						$('#edit-{{item.id}}-price').val(price);
+
+        						$('#{{item.id}}-desc').text(desc);
+        						$('#edit-{{item.id}}-desc').val(desc);
+
+        						$('#{{item.id}}-qty').text(qty + ' Available');
+        						$('#edit-{{item.id}}-qty').val(qty);
+
+        						exitEditMode{{item.id}}({{item.id}}, "img");
+        						exitEditMode{{item.id}}({{item.id}}, "name");
+        						exitEditMode{{item.id}}({{item.id}}, "price");
+        						exitEditMode{{item.id}}({{item.id}}, "desc");
+        						exitEditMode{{item.id}}({{item.id}}, "qty");
+        						console.log(response.message)
+        					} else {
+        						console.log(response.message)
+        					}
+        				},
+        				failure: function() {
+        					console.log("Server not responding...")
+        				}
+        			});
+        		}
+
+			}
+
+			// enter and exit edit mode functions.
+			var editItemMode{{item.id}} = function(itemID, itemParam) {
+				$('#'+ itemID +'-' + itemParam).hide();
+				$('#edit-'+ itemID +'-' + itemParam).show();
+				$('#edit-'+ itemID +'-'+ itemParam +'-btn').hide();
+				$('#'+ itemID +'-'+ itemParam +'-cancel').show();
+				$('#'+ itemID +'-'+ itemParam +'-save').show();
+				$('#'+ itemID +'-delete-init').hide();
+			}
+
+			var exitEditMode{{item.id}} = function(itemID, itemParam) {
+				$('#' + itemID + '-' + itemParam).show();
+				$('#edit-' + itemID + '-' + itemParam).hide();
+				$('#edit-'+ itemID + '-' + itemParam +'-btn').show();
+				$('#'+ itemID + '-' + itemParam + '-cancel').hide();
+				$('#'+ itemID + '-'+ itemParam +'-save').hide();
+				$('#'+ itemID +'-delete-init').show();
+			}
+
+			// edit item button click functions.
+			$(document).ready(function(){
+				// changes item name to edit mode.
+				$('#edit-{{item.id}}-name-btn').click(function(){
+					editItemMode{{item.id}}({{item.id}}, "name");
+				})
+				// cancel name edit mode.
+				$('#{{item.id}}-name-cancel').click(function(){
+					exitEditMode{{item.id}}({{item.id}}, "name");
+				})
+				// submit changes name button
+				$('#{{item.id}}-name-save').click(function(){
+					SubmitChanges{{item.id}}();
+				})
+
+
+				// changes item img to edit mode.
+				$('#edit-{{item.id}}-img-btn').click(function(){
+					editItemMode{{item.id}}({{item.id}}, "img");
+				})
+				// cancel name img mode.
+				$('#{{item.id}}-img-cancel').click(function(){
+					exitEditMode{{item.id}}({{item.id}}, "img");
+				})
+				// submit changes img button
+				$('#{{item.id}}-img-save').click(function(){
+					SubmitChanges{{item.id}}();
+				})
+
+
+				// changes item price to edit mode.
+				$('#edit-{{item.id}}-price-btn').click(function(){
+					editItemMode{{item.id}}({{item.id}}, "price");
+				})
+				// cancel price edit mode.
+				$('#{{item.id}}-price-cancel').click(function(){
+					exitEditMode{{item.id}}({{item.id}}, "price");
+				})
+				// submit changes price button
+				$('#{{item.id}}-price-save').click(function(){
+					SubmitChanges{{item.id}}();
+				})
+
+
+				// changes item desc to edit mode.
+				$('#edit-{{item.id}}-desc-btn').click(function(){
+					editItemMode{{item.id}}({{item.id}}, "desc");
+				})
+				// cancel desc edit mode.
+				$('#{{item.id}}-desc-cancel').click(function(){
+					exitEditMode{{item.id}}({{item.id}}, "desc");
+				})
+				// submit changes desc button
+				$('#{{item.id}}-desc-save').click(function(){
+					SubmitChanges{{item.id}}();
+				})
+
+
+				// changes item qty to edit mode.
+				$('#edit-{{item.id}}-qty-btn').click(function(){
+					editItemMode{{item.id}}({{item.id}}, "qty");
+				})
+				// cancel qty edit mode.
+				$('#{{item.id}}-qty-cancel').click(function(){
+					exitEditMode{{item.id}}({{item.id}}, "qty");
+				})
+				// submit changes qty button
+				$('#{{item.id}}-qty-save').click(function(){
+					SubmitChanges{{item.id}}();
+				})
+
+			})
+
+		</script>
 		<script>
 			// delete button ajax call.
 			$(document).ready(function() {

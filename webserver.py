@@ -66,6 +66,45 @@ def newItem():
 
         return jsonify(success="True", message="Item Successfully Added!")
 
+
+@app.route('/<int:itemID>/editItem', methods=['POST'])
+def editItem(itemID):
+    if request.args.get("state") != login_session['state']:
+        return jsonify(success="False", message="invalid state parameter")
+    else:
+        try:
+            itemInfo = request.json
+
+            name = itemInfo['name']
+            price = itemInfo['price']
+            desc = itemInfo['desc']
+            imgURL = itemInfo['imgURL']
+            qty = itemInfo['qty']
+        except:
+            return jsonify(success="False", message="Error unpacking json.")
+        try:
+            itemToEdit = session.query(Items).filter(Items.id == itemID).one()
+        except:
+            return jsonify(success="False", message="Invalid item ID")
+        try:
+            if int(price) < int(itemToEdit.price):
+                itemToEdit.onSale = "True"
+            else:
+                itemToEdit.onSale = "False"
+
+            itemToEdit.name = name
+            itemToEdit.price = price
+            itemToEdit.description = desc
+            itemToEdit.imageURL = imgURL
+            itemToEdit.qty = qty
+
+            session.add(itemToEdit)
+            session.commit()
+        except:
+            return jsonify(success="False", message="Could not update item.")
+        return jsonify(success="True", message="Successfully updated item info!")
+
+
 @app.route('/<int:itemID>/deleteItem', methods=['POST'])
 def deleteItem(itemID):
     if request.args.get("state") != login_session['state']:
