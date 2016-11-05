@@ -1,8 +1,7 @@
 # Item Catalog Project - Jake Gornall
 # 
 # This application was designed for Udacity's Item Catalog course by Jake Gornall.
-# Application allows users to sign in using their facebook accounts, 
-# create items to sell, update the item info or delete the item.
+# Application allows users to sign in using their facebook accounts, create items to sell, update the item info or delete the item.
 # 
 
 Language = Python 2.7
