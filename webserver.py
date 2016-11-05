@@ -20,7 +20,7 @@ session = DBSession()
 
 app = Flask(__name__)
 
-# makes procedure callable inside templates
+# makes procedure callable inside templates. Uncomment if you need to use it.
 # app.jinja_env.globals.update(functionName=functionName)
 
 BKGimages = ["/static/images/bicycle-1587515_1920.jpg",
