@@ -1,7 +1,9 @@
-from flask import Flask, render_template, url_for, redirect, request, make_response
+from flask import Flask, render_template, url_for
+from flask import redirect, request, make_response
 from flask import session as login_session
 import sqlite3
-import time, string, datetime, random
+import string
+import random
 import httplib2
 from flask import jsonify
 import requests
@@ -27,12 +29,15 @@ BKGimages = ["/static/images/bicycle-1587515_1920.jpg",
              "/static/images/cairn-1531997_1920.jpg",
              "/static/images/venetian-1705528_1920.jpg"]
 
-urlRegEx = re.compile(r"/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/")
 
 @app.route('/')
 def LandingPage():
     bkg = random.choice(BKGimages)
-    return render_template('landingPage.html', bkgImage=bkg)
+    return render_template(
+        'landingPage.html',
+        bkgImage=bkg
+        )
+
 
 @app.route('/newItem', methods=['POST'])
 def newItem():
@@ -48,21 +53,36 @@ def newItem():
             imgURL = newItemObj['imgURL']
             qty = newItemObj['qty']
         except:
-            return jsonify(success="False", message="Error unpacking json object.")
+            return jsonify(
+                success="False",
+                message="Error unpacking json object.")
 
         if qty <= 0:
-            return jsonify(success="False", message="Qty must be greater than 0.")
+            return jsonify(
+                success="False",
+                message="Qty must be greater than 0.")
 
         if not (name, price, description, imgURL, qty):
-            return jsonify(success="False", message="All fields required.")
+            return jsonify(
+                success="False",
+                message="All fields required.")
 
         try:
-            user = session.query(Users).filter(Users.fbID == login_session['fbID']).one()
-            newItem = Items(name=name, sellerID=user.id, price=price, description=description, imageURL=imgURL, qty=qty)
+            user = session.query(Users).filter(
+                Users.fbID == login_session['fbID']).one()
+            newItem = Items(
+                name=name,
+                sellerID=user.id,
+                price=price,
+                description=description,
+                imageURL=imgURL,
+                qty=qty)
             session.add(newItem)
             session.commit()
         except:
-            return jsonify(success="False", message="Item addition unsuccessful.")
+            return jsonify(
+                success="False",
+                message="Item addition unsuccessful.")
 
         return jsonify(success="True", message="Item Successfully Added!")
 
@@ -102,7 +122,9 @@ def editItem(itemID):
             session.commit()
         except:
             return jsonify(success="False", message="Could not update item.")
-        return jsonify(success="True", message="Successfully updated item info!")
+        return jsonify(
+            success="True",
+            message="Successfully updated item info!")
 
 
 @app.route('/<int:itemID>/deleteItem', methods=['POST'])
@@ -115,16 +137,21 @@ def deleteItem(itemID):
         except:
             return jsonify(success="False", message="Item not in database.")
 
-        user = session.query(Users).filter(Users.fbID == login_session['fbID']).one()
+        user = session.query(Users).filter(
+            Users.fbID == login_session['fbID']).one()
 
         if item.sellerID != user.id:
-            return jsonify(success="False", message="You can only delete items that you are selling.")
+            return jsonify(
+                success="False",
+                message="You can only delete items that you are selling.")
 
         try:
             session.delete(item)
             session.commit()
         except:
-            return jsonify(success="False", message="Unable to delete item at this time.")
+            return jsonify(
+                success="False",
+                message="Unable to delete item at this time.")
 
         return jsonify(success="True", message="Item Successfully Deleted!")
 
@@ -132,13 +159,17 @@ def deleteItem(itemID):
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method == 'POST':
-        state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
+        state = ''.join(
+            random.choice(
+                string.ascii_uppercase + string.digits) for x in xrange(32))
         access_token = request.data
 
         # Exchange client token for long-lived server-side token.
-        app_id = json.loads(open('fb_client_secrets.json', 'r').read())['web']['app_id']
-        app_secret = json.loads(open('fb_client_secrets.json', 'r').read())['web']['app_secret']
-        url = 'https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id=%s&client_secret=%s&fb_exchange_token=%s' % (app_id, app_secret, access_token)
+        app_id = json.loads(
+            open('fb_client_secrets.json', 'r').read())['web']['app_id']
+        app_secret = json.loads(
+            open('fb_client_secrets.json', 'r').read())['web']['app_secret']
+        url = 'https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id=%s&client_secret=%s&fb_exchange_token=%s' % (app_id, app_secret, access_token)  # noqa
         h = httplib2.Http()
         result = h.request(url, 'GET')[1]
 
@@ -146,7 +177,7 @@ def login():
         userinfo_url = "https://graph.facebook.com/v2.8/me"
         token = result.split("&")[0]
 
-        url = 'https://graph.facebook.com/v2.8/me?%s&fields=name,id,email' % token
+        url = 'https://graph.facebook.com/v2.8/me?%s&fields=name,id,email' % token  # noqa
         h = httplib2.Http()
         result = h.request(url, 'GET')[1]
 
@@ -158,14 +189,15 @@ def login():
         login_session['name'] = data['name']
         login_session['email'] = data['email']
 
-        url = 'https://graph.facebook.com/v2.8/me/picture?%s&redirect=0&height=200&width=200' % token
+        url = 'https://graph.facebook.com/v2.8/me/picture?%s&redirect=0&height=200&width=200' % token  # noqa
         h = httplib2.Http()
         result = h.request(url, 'GET')[1]
         data = json.loads(result)
 
         login_session['picture'] = data['data']['url']
 
-        userCount = session.query(Users).filter(Users.fbID == login_session['fbID']).count()
+        userCount = session.query(Users).filter(
+            Users.fbID == login_session['fbID']).count()
         # Add user to DB if not existing.
         if not userCount:
             newUser = Users(
@@ -174,22 +206,37 @@ def login():
                 email=login_session['email'],
                 pictureURL=login_session['picture']
                 )
+
             session.add(newUser)
             session.commit()
-            user = session.query(Users).filter(Users.fbID == login_session['fbID']).one()
-            message = "Successfully added %s as new user!" % login_session['name']
-            return jsonify(success=True, message=message, userID=user.id, state=login_session['state'])
+            user = session.query(Users).filter(
+                Users.fbID == login_session['fbID']).one()
+            message = "Successfully added %s as new user!" % login_session['name']  # noqa
+            return jsonify(
+                success=True,
+                message=message,
+                userID=user.id,
+                state=login_session['state']
+                )
+
         # Update user info if current user.
         if userCount:
-            user = session.query(Users).filter(Users.fbID == login_session['fbID']).one()
+            user = session.query(Users).filter(
+                Users.fbID == login_session['fbID']).one()
             user.name = login_session['name']
             user.email = login_session['email']
             user.pictureURL = login_session['picture']
             session.add(user)
             session.commit()
-            user = session.query(Users).filter(Users.fbID == login_session['fbID']).one()
-            message = "Successfully updated %s's user info!" % login_session['name']
-            return jsonify(success=True, message=message, userID=user.id, state=login_session['state'])
+            user = session.query(Users).filter(
+                Users.fbID == login_session['fbID']).one()
+            message = "Successfully updated %s's user info!" % login_session['name']  # noqa
+            return jsonify(
+                success=True,
+                message=message,
+                userID=user.id,
+                state=login_session['state']
+                )
         else:
             message = "Error occurred while updating info."
             return jsonify(success=False, message=message)
@@ -197,6 +244,7 @@ def login():
     if request.method == 'GET':
         bkg = random.choice(BKGimages)
         return render_template('login.html', bkgImage=bkg)
+
 
 @app.route('/fbdisconnect', methods=["POST"])
 def dbdisconnect():
@@ -213,6 +261,7 @@ def dbdisconnect():
     del login_session['fbID']
     return "user logged"
 
+
 @app.route('/<int:userID>/profile')
 def profile(userID):
     if request.args.get("state") != login_session['state']:
@@ -220,8 +269,17 @@ def profile(userID):
     else:
         bkg = random.choice(BKGimages)
         user = session.query(Users).filter(Users.id == userID).one()
-        userMerch = session.query(Items).filter(Items.sellerID == user.id).all()
-        return render_template('userProfile.html', name=user.name, pictureURL=user.pictureURL, bkgImage=bkg, userMerch=userMerch, state=login_session['state'])
+        userMerch = session.query(Items).filter(
+            Items.sellerID == user.id).all()
+        return render_template(
+            'userProfile.html',
+            name=user.name,
+            pictureURL=user.pictureURL,
+            bkgImage=bkg,
+            userMerch=userMerch,
+            state=login_session['state']
+            )
+
 
 @app.route('/<int:userID>/userSettings')
 def UserSettings(userID):
@@ -230,15 +288,19 @@ def UserSettings(userID):
     else:
         return "user Settings"
 
+
 @app.route('/clearanceItemsAPI', methods=['GET'])
 def clearanceItemsAPI():
-    clearanceItems = session.query(Items).filter(Items.onClearance == 'True').all()
+    clearanceItems = session.query(Items).filter(
+        Items.onClearance == 'True').all()
     return jsonify(results=[e.serialize() for e in clearanceItems])
+
 
 @app.route('/saleItemsAPI', methods=['GET'])
 def saleItemsAPI():
     saleItems = session.query(Items).filter(Items.onSale == 'True').all()
     return jsonify(results=[e.serialize() for e in saleItems])
+
 
 @app.route('/allItemsAPI', methods=['GET'])
 def allItems():
