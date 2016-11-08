@@ -30,8 +30,9 @@ BKGimages = ["/static/images/bicycle-1587515_1920.jpg",
              "/static/images/venetian-1705528_1920.jpg"]
 
 
-@app.route('/')
+@app.route('/', methods=['GET'])
 def LandingPage():
+    '''Handles requests to the main landing page.'''
     bkg = random.choice(BKGimages)
     return render_template(
         'landingPage.html',
@@ -41,6 +42,11 @@ def LandingPage():
 
 @app.route('/newItem', methods=['POST'])
 def newItem():
+    '''Handles requests to add new items to database. 
+    to test functionality go to access the profile page and
+    click the NEW ITEM button. This will render a modal with
+    the new item form. The new item form sends a post request with
+    the new item's data via ajax.'''
     if request.args.get("state") != login_session['state']:
         return jsonify(success="False", message="invalid state parameter")
     else:
@@ -89,6 +95,9 @@ def newItem():
 
 @app.route('/<int:itemID>/editItem', methods=['POST'])
 def editItem(itemID):
+    '''handles requests to change a particular item's data.
+    Forms to edit item info is generated on the profile page.
+    Item changes data is sent in a json object via ajax post request.'''
     if request.args.get("state") != login_session['state']:
         return jsonify(success="False", message="invalid state parameter")
     else:
@@ -129,6 +138,9 @@ def editItem(itemID):
 
 @app.route('/<int:itemID>/deleteItem', methods=['POST'])
 def deleteItem(itemID):
+    '''Handles requests to delete items from database.
+    delete buttons are found on each item on the profile page.
+    Request is submitted via ajax request.'''
     if request.args.get("state") != login_session['state']:
         return jsonify(success="False", message="invalid state parameter")
     else:
@@ -158,6 +170,7 @@ def deleteItem(itemID):
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
+    '''Handles login requests via facebook.'''
     if request.method == 'POST':
         state = ''.join(
             random.choice(
@@ -198,6 +211,7 @@ def login():
 
         userCount = session.query(Users).filter(
             Users.fbID == login_session['fbID']).count()
+
         # Add user to DB if not existing.
         if not userCount:
             newUser = Users(
@@ -248,6 +262,9 @@ def login():
 
 @app.route('/fbdisconnect', methods=["POST"])
 def dbdisconnect():
+    '''Ends session and deletes session data upon request.
+    Currently, logging out is done through the facebook logout button.
+    This adds the option to implement a custom logout button if need arises.'''
     facebook_id = login_session['fbID']
     url = 'https://graph.facebook.com/%s/permissions' % facebook_id
     h = httplib2.Http()
@@ -262,8 +279,9 @@ def dbdisconnect():
     return "user logged"
 
 
-@app.route('/<int:userID>/profile')
+@app.route('/<int:userID>/profile', methods=['GET'])
 def profile(userID):
+    '''Handles requests to the profile page.'''
     if request.args.get("state") != login_session['state']:
         return redirect('/')
     else:
@@ -283,6 +301,8 @@ def profile(userID):
 
 @app.route('/<int:userID>/userSettings')
 def UserSettings(userID):
+    '''Handles requests to the user settings page.
+    Not Currently implemented. Will be in future iterations of project.'''
     if request.args.get("state") != login_session['state']:
         return redirect('/')
     else:
@@ -291,6 +311,7 @@ def UserSettings(userID):
 
 @app.route('/clearanceItemsAPI', methods=['GET'])
 def clearanceItemsAPI():
+    '''JSON endpoint for all items that are on clearance.'''
     clearanceItems = session.query(Items).filter(
         Items.onClearance == 'True').all()
     return jsonify(results=[e.serialize() for e in clearanceItems])
@@ -298,12 +319,14 @@ def clearanceItemsAPI():
 
 @app.route('/saleItemsAPI', methods=['GET'])
 def saleItemsAPI():
+    '''JSON endpoint for all items that are on sale.'''
     saleItems = session.query(Items).filter(Items.onSale == 'True').all()
     return jsonify(results=[e.serialize() for e in saleItems])
 
 
 @app.route('/allItemsAPI', methods=['GET'])
 def allItems():
+    '''JSON endpoint for all items.'''
     items = session.query(Items).all()
     return jsonify(results=[e.serialize() for e in items])
 
