@@ -1,7 +1,6 @@
 import sys
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String, BigInteger
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
 
 Base = declarative_base()
@@ -9,7 +8,7 @@ Base = declarative_base()
 class Users(Base):
     __tablename__ = 'Users'
     id = Column(Integer, primary_key=True)
-    fbID = Column(Integer, nullable = True)
+    fbID = Column(BigInteger, nullable = True)
     name = Column(String(80), nullable=False)
     email = Column(String(255), nullable=True)
     pictureURL = Column(String(255), default="http://placehold.it/200x200")
@@ -41,5 +40,5 @@ class Items(Base):
 
 
 
-engine = create_engine('sqlite:///ItemCatalog.db')
+engine = create_engine('postgresql://catalog:catalog@localhost/ItemCatalogDB')
 Base.metadata.create_all(engine)

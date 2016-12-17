@@ -1,7 +1,6 @@
 from flask import Flask, render_template, url_for
 from flask import redirect, request, make_response
 from flask import session as login_session
-import sqlite3
 import string
 import random
 import httplib2
@@ -14,7 +13,7 @@ import json
 import re
 
 # Create session and connect to DB
-engine = create_engine('sqlite:///ItemCatalog.db')
+engine = create_engine('postgresql://catalog:catalog@localhost/ItemCatalogDB')
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
@@ -329,6 +328,7 @@ def allItems():
     '''JSON endpoint for all items.'''
     items = session.query(Items).all()
     return jsonify(results=[e.serialize() for e in items])
+
 
 if __name__ == "__main__":
     app.secret_key = 'super_secret_key'
