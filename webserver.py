@@ -13,7 +13,7 @@ import json
 import re
 
 # Create session and connect to DB
-engine = create_engine('postgresql://catalog:catalog@localhost/ItemCatalogDB')
+engine = create_engine('sqlite:///ItemCatalogDB')
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()

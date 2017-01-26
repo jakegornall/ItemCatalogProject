@@ -29,7 +29,7 @@ function checkLoginState() {
 // facebook sdk
 window.fbAsyncInit = function() {
     FB.init({
-        appId      : '331293527223662',
+        appId      : '382930878726593',
         cookie     : true,
         xfbml      : true,
         version    : 'v2.8'
