@@ -7,12 +7,8 @@ Language = Python 2.7
 if not installed you can find it here: https://www.python.org/download/releases/2.7/
 
 Installing Dependencies:
-- Flask
-- Sqlite3
-- SqlAlchemy
-
-for each library, if not already installed. Run the command "pip install libraryName".
-Replace "libraryName" with the name of the desired library to install.
+1. Run "install_requirements.sh"
+2. Follow the install instructions [here](https://www.tutorialspoint.com/sqlite/sqlite_installation.htm) to install Sqlite3
 
 
 
