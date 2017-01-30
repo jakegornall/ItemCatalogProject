@@ -3,18 +3,18 @@
 ## This application was designed for Udacity's Item Catalog course by Jake Gornall.
 ## Application allows users to sign in using their facebook accounts, create items to sell, update the item info or delete the item.
 
-Language = Python 2.7
-if not installed you can find it here: https://www.python.org/download/releases/2.7/
+**Language** = Python 2.7
+if not installed, click [here](https://www.python.org/download/releases/2.7/).
 
-Installing Dependencies:
+### Installing Dependencies:
 1. Run "install_requirements.sh"
-2. Follow the install instructions [here](https://www.tutorialspoint.com/sqlite/sqlite_installation.htm) to install Sqlite3
+2. Follow the install instructions [here](https://www.tutorialspoint.com/sqlite/sqlite_installation.htm) to install Sqlite3.
 
 
 
-Running Application on localhost:
+### Running Application on localhost:
 
-1. clone repository to your machine by opening Git Bash and using the command "git clone https://github.com/jakegornall/ItemCatalogProject"
+1. clone repository to your machine by opening Git Bash and using the command ```git clone https://github.com/jakegornall/ItemCatalogProject```
 
 2. before you can run the application you need to create an account with facebook as a developer.
 
